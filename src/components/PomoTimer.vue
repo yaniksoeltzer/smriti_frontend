@@ -83,9 +83,9 @@ export default {
   },
   mounted(){
     axios
-      .get(this.apiUrl)
+      .get(this.apiUrl+ "/current")
       .then(response => {
-        this.pcounter.currentSessionNumber = response["data"]["currentSessionNumber"]
+        this.pcounter.currentSessionNumber = response["data"]["sessionNumber"]
     }).catch(()=> {
       this.apiError("Could not get last Pomodoro number")
     }).finally(()=>{
