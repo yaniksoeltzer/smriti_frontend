@@ -1,0 +1,11 @@
+orbs:
+  docker: circleci/docker@1.5.0
+version: 2.1
+workflows:
+  build-and-publish-docker-image:
+    jobs:
+      - docker/publish:
+          image: yanik/smriti_frontend
+          registry: whale.denines.de
+          context: whale
+          tag: latest
