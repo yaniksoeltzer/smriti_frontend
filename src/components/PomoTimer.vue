@@ -1,7 +1,6 @@
 <template>
   <div id="pomoTimer" class="card m-5 mx-auto" style="height: 19em; width: 30em">
     <div class="card-body position-relative">
-      {{ startTime }}
       <p class="h3 position-absolute top-0 start-50 p-3 m-0 translate-middle-x">
         {{ pcounter.currentSessionNumber }}
         <span v-if="pcounter.isBreak">Break</span>
@@ -25,16 +24,14 @@
 
 <script>
 const axios = require('axios');
-
+import {createToast} from 'mosha-vue-toastify';
+import 'mosha-vue-toastify/dist/style.css'
 
 class PCounter {
   currentSessionNumber = 0;
   workMinutes = 25 ;
   breakMinutes = 5 ;
   bigBreakMinutes = 15 ;
-  constructor(sn){
-    this.currentSessionNumber = sn
-  }
   nextSession(){
       this.currentSessionNumber += 1;
   }
@@ -85,18 +82,33 @@ export default {
     }
   },
   mounted(){
-    this.resetTimer()
     axios
       .get(this.apiUrl)
       .then(response => {
-        let currentSessionNumber = response["data"]["currentSessionNumber"]
-        this.pcounter = new PCounter(currentSessionNumber)
-        this.resetTimer()
+        this.pcounter.currentSessionNumber = response["data"]["currentSessionNumber"]
+    }).catch(()=> {
+      this.apiError("Could not get last Pomodoro number")
+    }).finally(()=>{
+      this.resetTimer()
     })
   },
+
   methods: {
     pad(n) {
       return n < 10 ? '0' + n : n
+    },
+    apiError(message){
+      createToast(
+          {title:"Error Accessing API", description:message},
+          {type:"danger", timeout:10000})
+    },
+    playLockIn(){
+      let audio = new Audio(require("../assets/sound_lock_in.mp3"))
+      audio.play()
+    },
+    playSuccess(){
+      let audio = new Audio(require("../assets/sound_success.mp3"))
+      audio.play()
     },
     startTimer(){
       this.resetTimer()
@@ -113,6 +125,7 @@ export default {
       this.remainingSeconds = 0
     },
     continueTimer(){
+      this.playLockIn()
       this.pause = false
       this.running = true
       this.endTime = new Date().getTime() +
@@ -127,23 +140,32 @@ export default {
       this.pause = true
     },
     finishTimer(){
-      this.running = false
-      clearInterval(this.timer);
-      let durationInSeconds = (this.pcounter.sessionDuration - this.remainingMinutes) * 60 - this.remainingSeconds
+      if(this.running){
+        // finish current running pomodoro
+        this.running = false
+        clearInterval(this.timer);
+        let durationInSeconds = (this.pcounter.sessionDuration - this.remainingMinutes) * 60 - this.remainingSeconds
+        const formData = new FormData();
+        formData.append('pomo_type', this.pcounter.sessionName);
+        formData.append('duration_in_seconds', durationInSeconds);
+        formData.append('start_time', this.startTime.toUTCString());
+        formData.append('pomo_number', this.pcounter.currentSessionNumber);
+        axios.post(this.apiUrl+'/log', formData).catch(()=>{
+          this.apiError("Could submit Pomodoro")
+        })
+      }else{
+        // skipped without started
+      }
       //TODO run music
-      const formData = new FormData();
-      formData.append('pomo_type', this.pcounter.sessionName);
-      formData.append('duration_in_seconds', durationInSeconds);
-      formData.append('start_time', this.startTime.toUTCString());
-      formData.append('pomo_number', this.pcounter.currentSessionNumber);
-      axios.post(this.apiUrl+'/log', formData)
       this.pcounter.nextSession()
       this.resetTimer()
     },
     update(){
       let difference = this.endTime - new Date().getTime();
       if(difference <= 0){
+        this.playSuccess()
         this.finishTimer()
+        document.getElementById('success_audio').play();
       }else{
         this.running = true
         this.remainingMinutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
