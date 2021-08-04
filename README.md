@@ -1,5 +1,11 @@
 # smriti
 
+# TODO List
+* [ ] run pomodoro if tab is closed
+* [ ] view finished pomodoros
+* [ ] fix logo
+
+
 ## Project setup
 ```
 npm install

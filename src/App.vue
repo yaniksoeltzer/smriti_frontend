@@ -1,5 +1,5 @@
 <template>
-  <PomoTimer apiUrl="https://smriti.denines.de/api/pomo"/>
+  <PomoTimer apiUrl="http://127.0.0.1:5000/api/pomo"/>
 </template>
 
 <script>
