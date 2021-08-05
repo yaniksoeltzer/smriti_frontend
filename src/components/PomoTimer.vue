@@ -57,7 +57,7 @@ export default {
     return {
       remainingTime: 0,
       currentPomo:{
-        pomoType:"Waiting",
+        pomoType:"NOT SET JET",
         duration: 0
       },
     }
@@ -106,7 +106,7 @@ export default {
     },
     async finishPomo(){
       this.currentPomo.finishedAt = new Date()
-      if(this.currentPomo.startedAt !== null){
+      if(this.currentPomo.startedAt != null){
         // only when startedAt !== null we know that pomoID exists
         await this.pomoApi.finishPomodoro(this.currentPomo.pomoID)
 

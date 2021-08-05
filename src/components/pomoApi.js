@@ -39,7 +39,7 @@ export default class PomoApi{
     }
 
     fetchTodayFinishedPomos(){
-        return axios.get(this.apiUrl + "/?today&finished&pomo_type=work").then((response) => {
+        return axios.get(this.apiUrl + "/?today&finished").then((response) => {
             return response.data.map((data) => this.parsePomo(data))
         }).catch(() => apiError("Could not fetch today's finished pomos!"))
     }

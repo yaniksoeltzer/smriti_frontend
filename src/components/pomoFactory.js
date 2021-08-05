@@ -3,7 +3,7 @@ export const pomoConfig = {
   times:{
     work:25*60*1000,
     break: 5*60*1000,
-    bigBreak: 15*60*1000
+    "big break": 15*60*1000
   }
 }
 
