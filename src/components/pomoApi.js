@@ -25,19 +25,12 @@ export default class PomoApi{
             pomoID:data["pomo_id"]
         }
     }
-
     fetchCurrentPomo(){
         let url = this.apiUrl + "/current"
         return axios.get(url).then((response) => {
             return this.parsePomo(response.data)
         }).catch(() => apiError("could not fetch current pomo"))
     }
-    fetchLastPomo(){
-        return axios.get(this.apiUrl + "/last").then((response) => {
-            return this.parsePomo(response.data)
-        })
-    }
-
     fetchTodayFinishedPomos(){
         return axios.get(this.apiUrl + "/?today&finished").then((response) => {
             return response.data.map((data) => this.parsePomo(data))
