@@ -1,7 +1,9 @@
 # smriti
 
 # TODO List
-* [ ] run pomodoro if tab is closed
+* [x] run pomodoro if tab is closed
+* [ ] pomo api
+* [ ] pomoCounter Api
 * [ ] view finished pomodoros
 * [ ] fix logo
 

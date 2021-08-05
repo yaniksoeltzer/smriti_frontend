@@ -20,12 +20,15 @@
     "@vue/compiler-sfc": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0"
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-vue": "^7.0.0",
+    "jest": "^27.0.6"
   },
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "jest/globals": true
     },
     "extends": [
       "plugin:vue/vue3-essential",
@@ -34,6 +37,9 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
+    "plugins": [
+      "jest"
+    ],
     "rules": {}
   },
   "browserslist": [
