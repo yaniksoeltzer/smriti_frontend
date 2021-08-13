@@ -1,6 +1,71 @@
 const axios = require('axios');
-
 import {createToast} from 'mosha-vue-toastify';
+
+
+export default class PomoApi{
+    constructor(apiUrl) {
+        this.apiUrl = apiUrl
+    }
+
+
+    fetchNextPomo(){
+        let url = this.apiUrl + "/next"
+        return axios.get(url)
+            .then((response) => {
+                return parsePomo(response.data)
+            })
+            .catch(() => {
+                apiError("Could not fetch next pomo!")
+            })
+    }
+
+    stopPomodoro(){
+        let url = this.apiUrl + "/stop"
+        return axios.get(url)
+            .then((response) => {
+                return parsePomo(response.data)
+            })
+            .catch(()=>{
+                apiError("Could not stop pomodoro!")
+            })
+    }
+
+    startPomo(pomoType){
+        let url = this.apiUrl + "/start"
+        if(pomoType != null){
+            url = url + "?pomoType="+pomoType
+        }
+        return axios.get(url)
+            .then((response) => {
+                return parsePomo(response.data)
+            })
+            .catch(()=>{
+                apiError("Could not start pomodoro!")
+            })
+    }
+
+    pausePomo(){
+        let url = this.apiUrl + "/pause"
+        return axios.get(url)
+            .then((response) => {
+                return parsePomo(response.data)
+            })
+            .catch(()=>{
+                apiError("Could not pause pomodoro!")
+            })
+    }
+
+    continuePomo(){
+        let url = this.apiUrl + "/continue"
+        return axios.get(url)
+            .then((response) => {
+                return parsePomo(response.data)
+            })
+            .catch(()=>{
+                apiError("Could not continue pomodoro!")
+            })
+    }
+}
 
 
 function apiError(message){
@@ -9,95 +74,16 @@ function apiError(message){
         {type:"danger", timeout:10000})
 }
 
-export default class PomoApi{
-    constructor(apiUrl) {
-        this.apiUrl = apiUrl
-    }
 
-    parsePomo(data){
-        if(data == null){
-            return null
-        }
-        return {
-            pomoType:data["pomo_type"],
-            duration:data['planned_duration_in_seconds']*1000,
-            startedAt:new Date(data["started_at"]),
-            pomoID:data["pomo_id"]
-        }
+function parsePomo(data){
+    if(data == null){
+        return null
     }
-
-    parseIntermission(data){
-        if(data == null){
-            return null
-        }
-        let intermission = {
-            pomoIntermissionID: data["pomo_intermission_id"],
-            startedAt:new Date(data["started_at"]),
-        }
-        let finishedAt = data["finished_at"]
-        if (finishedAt != null){
-            intermission.finishedAt = new Date(finishedAt)
-        }
-        return intermission
+    return {
+        pomoType:data["pomo_type"],
+        duration:data['planned_duration_in_seconds']*1000,
+        startedAt:"started_at" in data && data["started_at"] != null ? new Date(data["started_at"]) : null,
+        pausedAt:"paused_at" in data && data["paused_at"] != null ? new Date(data["paused_at"]) : null,
+        pausedTime: "paused_time_in_seconds" in data && data["paused_time_in_seconds"] != null ? data["paused_time_in_seconds"]*1000 : 0
     }
-
-    getIntermissionsFor(pomoID){
-        return axios.get(this.apiUrl +"/"+pomoID+ "/intermission").then((response) => {
-            return response.data.map((data) => this.parseIntermission(data))
-        }).catch(() => apiError("Could not fetch pomo_intermissions!"))
-    }
-    addIntermission(pomoID){
-        const formData = new FormData();
-        formData.append('started_at', new Date().toISOString());
-        return axios.post(this.apiUrl + '/'+ pomoID + "/intermission", formData )
-            .then((response) => {
-                return this.parseIntermission(response.data)
-            }).catch(()=>{
-                apiError("Could not insert new intermission!")
-            })
-    }
-    finishIntermission(pomoID, intermissionID){
-        const formData = new FormData();
-        formData.append('finished_at', new Date().toISOString());
-        return axios.put(this.apiUrl + '/'+ pomoID + "/intermission/"+ intermissionID, formData )
-            .then((response) => {
-                return this.parseIntermission(response.data)
-            }).catch(()=>{
-                apiError("Could not insert new intermission!")
-            })
-    }
-
-    fetchCurrentPomo(){
-        let url = this.apiUrl + "/current"
-        return axios.get(url).then((response) => {
-            return this.parsePomo(response.data)
-        }).catch(() => apiError("could not fetch current pomo"))
-    }
-    fetchTodayFinishedPomos(){
-        return axios.get(this.apiUrl + "/?today&finished").then((response) => {
-            return response.data.map((data) => this.parsePomo(data))
-        }).catch(() => apiError("Could not fetch today's finished pomos!"))
-    }
-
-    addPomo({pomoType, duration, startedAt}){
-        const formData = new FormData();
-        formData.append('pomo_type', pomoType);
-        formData.append('planned_duration_in_milliseconds', duration);
-        formData.append('start_time', startedAt.toUTCString());
-        console.log("submit new pomo")
-        return axios.post(this.apiUrl + '/', formData)
-            .then((response) => {
-                return response.data['pomo_id']
-            }).catch(()=>{
-                apiError("Could not insert new pomo!")
-            })
-    }
-    finishPomodoro(pomoID){
-        const formData = new FormData();
-        formData.append('finished_at', new Date().toISOString());
-        return axios.put(this.apiUrl+'/' + pomoID, formData) .catch(()=>{
-            apiError("Could not finish pomodoro!")
-        })
-    }
-
 }
