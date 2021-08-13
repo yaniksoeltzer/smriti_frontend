@@ -25,6 +25,48 @@ export default class PomoApi{
             pomoID:data["pomo_id"]
         }
     }
+
+    parseIntermission(data){
+        if(data == null){
+            return null
+        }
+        let intermission = {
+            pomoIntermissionID: data["pomo_intermission_id"],
+            startedAt:new Date(data["started_at"]),
+        }
+        let finishedAt = data["finished_at"]
+        if (finishedAt != null){
+            intermission.finishedAt = new Date(finishedAt)
+        }
+        return intermission
+    }
+
+    getIntermissionsFor(pomoID){
+        return axios.get(this.apiUrl +"/"+pomoID+ "/intermission").then((response) => {
+            return response.data.map((data) => this.parseIntermission(data))
+        }).catch(() => apiError("Could not fetch pomo_intermissions!"))
+    }
+    addIntermission(pomoID){
+        const formData = new FormData();
+        formData.append('started_at', new Date().toISOString());
+        return axios.post(this.apiUrl + '/'+ pomoID + "/intermission", formData )
+            .then((response) => {
+                return this.parseIntermission(response.data)
+            }).catch(()=>{
+                apiError("Could not insert new intermission!")
+            })
+    }
+    finishIntermission(pomoID, intermissionID){
+        const formData = new FormData();
+        formData.append('finished_at', new Date().toISOString());
+        return axios.put(this.apiUrl + '/'+ pomoID + "/intermission/"+ intermissionID, formData )
+            .then((response) => {
+                return this.parseIntermission(response.data)
+            }).catch(()=>{
+                apiError("Could not insert new intermission!")
+            })
+    }
+
     fetchCurrentPomo(){
         let url = this.apiUrl + "/current"
         return axios.get(url).then((response) => {
@@ -51,7 +93,9 @@ export default class PomoApi{
             })
     }
     finishPomodoro(pomoID){
-        return axios.get(this.apiUrl+'/' + pomoID + "/finish") .catch(()=>{
+        const formData = new FormData();
+        formData.append('finished_at', new Date().toISOString());
+        return axios.put(this.apiUrl+'/' + pomoID, formData) .catch(()=>{
             apiError("Could not finish pomodoro!")
         })
     }
