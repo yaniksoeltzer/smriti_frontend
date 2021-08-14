@@ -2,7 +2,10 @@
   <h1 class="pt-5">Pomo Tasks</h1>
   <ul class="list-group p-3">
     <div v-for="task in tasks" v-bind:key="task.task_id" >
-      <Todo v-bind="task" v-bind:task_id="task.task_id" @completed="(v) => toggleTask(task.task_id, v)" />
+      <Todo
+          v-bind="task"
+          @completed="(v) => toggleTask(task.task_id, v)"
+      />
     </div>
   </ul>
   {{tasks}}
@@ -14,9 +17,11 @@ import Todo from "@/components/Todo";
 export default {
   name: "TodoList",
   components: {Todo},
+  props:{
+    apiUrl: String
+  },
   methods: {
     toggleTask: function(task_id, value){
-      console.log(task_id)
       console.log("set task ",task_id," completion to", value)
       this.tasks.filter(t => t.task_id === task_id).forEach((t)=>{
         t.completed = value

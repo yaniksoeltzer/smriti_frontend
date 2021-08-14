@@ -1,24 +1,30 @@
 <template>
   <input
       type="checkbox"
-      :checked="checked"
+      :checked="checkedModel"
       class="checkbox-input"
   />
   <label
       class="checkbox-label"
-      v-on:click.prevent="toggle"
+      v-on:click.prevent="checkedModel = !checkedModel"
   >
   </label>
 </template>
 
 <script>
+import { computed } from 'vue'
 export default {
   props:{
     checked: Boolean
   },
-  methods:{
-    toggle: function(){
-      this.$emit("checked", !this.checked)
+  emits:["update:checked"],
+  setup(props, { emit }) {
+    const checkedModel = computed({
+      get: () => props.checked,
+      set: (value) => emit('update:checked', value)
+    })
+    return {
+      checkedModel,
     }
   }
 }
