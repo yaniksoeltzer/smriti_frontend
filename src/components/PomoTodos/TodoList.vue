@@ -20,9 +20,6 @@ export default {
   props:{
     taskList: TaskList
   },
-  mounted: function (){
-    this.taskList.fetchTasks()
-  }
 }
 </script>
 

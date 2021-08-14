@@ -1,8 +1,10 @@
 <template>
   <PomoTimer v-if="false" apiUrl="http://127.0.0.1:5000/api/pomo"/>
   <TodoList v-bind:taskList="pomoTasks"/>
+  <!--
   <TodoList v-bind:taskList="everyDayTasks"/>
   <TodoList v-bind:taskList="oneTimeTasks"/>
+  -->
 </template>
 
 <script>
@@ -17,13 +19,10 @@ let apiUrl = "http://127.0.0.1:5000/api/task"
 class TaskContainer{
   allTasks = []
   createTaskFromData(taskData){
-    console.log(taskData)
     let sameIDTasks = this.allTasks.filter(task => task.taskID === taskData.task_id)
     if (sameIDTasks.length > 0){
-      console.log("found already existing task", sameIDTasks)
       return sameIDTasks[0]
     }else{
-      console.log("uniqe task")
       let newTask = new LinkedTask(taskData, apiUrl)
       this.allTasks.push(newTask)
       return newTask

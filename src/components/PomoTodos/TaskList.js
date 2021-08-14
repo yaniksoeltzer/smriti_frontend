@@ -4,6 +4,4 @@ export default class TaskList{
         this.tasks = tasks
         this.name = name
     }
-    async fetchTasks(){
-    }
 }
