@@ -2,24 +2,33 @@
   <h1 class="pt-5" >{{  taskList.name }}</h1>
   <span class="d-flex justify-content-center">
     <ul class="p-0" style="width: 15cm">
-      <div v-for="task in taskList.tasks" v-bind:key="task.task_id" >
-        <Todo
-            v-model:completed="task.completed"
-            v-model:description="task.description"
-        />
-      </div>
+      <draggable
+          :list="taskList.tasks"
+          class="list-group"
+          ghost-class="ghost"
+          @start="dragging = true"
+          @end="dragging = false"
+      >
+        <template #item="{ element }">
+          <Todo
+              v-model:description="element.description"
+              v-model:completed="element.completed"
+          />
+        </template>
+      </draggable>
   </ul>
   </span>
 
 </template>
 
 <script>
-import Todo from "@/components/PomoTodos/Todo";
 import TaskList from "@/components/PomoTodos/TaskList";
+import draggable from "vuedraggable";
+import Todo from "@/components/PomoTodos/Todo";
 
 export default {
   name: "TodoList",
-  components: {Todo},
+  components: {Todo, draggable},
   props:{
     taskList: TaskList
   },
