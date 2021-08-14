@@ -1,29 +1,24 @@
 <template>
   <input
       type="checkbox"
-      v-model="checked"
+      :checked="checked"
       class="checkbox-input"
   />
   <label
       class="checkbox-label"
+      v-on:click.prevent="toggle"
   >
   </label>
 </template>
 
 <script>
-import { computed } from 'vue'
 export default {
-  props: {
-    'modelValue': Boolean,
+  props:{
+    checked: Boolean
   },
-  setup(props, { emit }) {
-    const checked = computed({
-      get: () => props.modelValue,
-      set: (value) => emit('update:modelValue', value)
-    })
-
-    return {
-      checked,
+  methods:{
+    toggle: function(){
+      this.$emit("checked", !this.checked)
     }
   }
 }
@@ -97,17 +92,14 @@ export default {
   transform: rotate(-45deg);
 }
 
-.checkbox-input:checked + .checkbox-label,
-.checkbox-label.checked {
+.checkbox-input:checked + .checkbox-label{
   border-color: #34b93d;
 }
-.checkbox-input:checked + .checkbox-label::after,
-.checkbox-label.checked::after {
+.checkbox-input:checked + .checkbox-label::after{
   height: 50px;
   animation: dothabottomcheck 0.2s ease 0s forwards;
 }
-.checkbox-input:checked + .checkbox-label::before,
-.checkbox-label.checked::before {
+.checkbox-input:checked + .checkbox-label::before{
   height: 120px;
   animation: dothatopcheck 0.4s ease 0s forwards;
 }
