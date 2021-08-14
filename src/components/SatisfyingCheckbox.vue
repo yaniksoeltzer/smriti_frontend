@@ -1,30 +1,27 @@
 <template>
   <input
       type="checkbox"
-      :checked="checkedModel"
+      :checked="checked_"
       class="checkbox-input"
   />
   <label
       class="checkbox-label"
-      v-on:click.prevent="checkedModel = !checkedModel"
+      v-on:click.prevent="checked_ = !checked_"
   >
   </label>
 </template>
 
 <script>
-import { computed } from 'vue'
+import {useModelWrapper} from "@/components/ModelWrapper";
+
 export default {
   props:{
     checked: Boolean
   },
   emits:["update:checked"],
   setup(props, { emit }) {
-    const checkedModel = computed({
-      get: () => props.checked,
-      set: (value) => emit('update:checked', value)
-    })
     return {
-      checkedModel,
+      checked_ : useModelWrapper(props, emit, "checked"),
     }
   }
 }

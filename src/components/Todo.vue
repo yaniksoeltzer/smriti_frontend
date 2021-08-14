@@ -7,7 +7,7 @@
 
 <script>
 import SatisfyingCheckbox from "@/components/SatisfyingCheckbox";
-import { computed } from 'vue'
+import {useModelWrapper} from "@/components/ModelWrapper";
 export default {
   name: "Todo",
   components: {SatisfyingCheckbox},
@@ -15,21 +15,10 @@ export default {
     description: String,
     completed: Boolean
   },
-  methods: {
-    setChecked: function (value){
-      this.$emit("completed", value)
-    }
-  },
+  emits:["update:completed"],
   setup(props, { emit }) {
-    const completedModel = computed({
-      get: () => props.completed,
-      set: (value) => {
-        emit('completed', value)
-      }
-    })
-
     return {
-      checkedModel: completedModel,
+      checkedModel: useModelWrapper(props, emit, "completed"),
     }
   }
 }

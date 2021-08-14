@@ -3,8 +3,8 @@
   <ul class="list-group p-3">
     <div v-for="task in tasks" v-bind:key="task.task_id" >
       <Todo
-          v-bind="task"
-          @completed="(v) => toggleTask(task.task_id, v)"
+          v-model:completed="task.completed"
+          v-model:description="task.description"
       />
     </div>
   </ul>
