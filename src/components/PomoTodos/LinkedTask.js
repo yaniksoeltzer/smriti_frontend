@@ -8,13 +8,24 @@ export default class LinkedTask{
         this.id = "NOT JET SET"
     }
     async fetchData(){
-        console.log("fetch task from", this.url)
+        //console.log("fetch task from", this.url)
         await axios.get(this.url)
             .then(response => response.data)
             .then(taskData => {
-                this._completed =  false
-                this._description = taskData["description"]
                 this.id = taskData["id"]
+                if (this.id.startsWith("every_day_task")){
+                    this.lastCompletion = new Date(taskData["lastcompletion"])
+                    if(this.lastCompletion == null){
+                        this._completed = false
+                    }else{
+                        let oneDay = 1000 * 60* 60 * 24
+                        let timeSinceLastCompletion = new Date().getTime() - this.lastCompletion.getTime()
+                        this._completed = timeSinceLastCompletion < oneDay;
+                    }
+                }else if (this.id.startsWith("one_time_task")){
+                    this._completed = taskData["completed_at"] != null
+                }
+                this._description = taskData["description"]
             })
     }
 
@@ -22,10 +33,11 @@ export default class LinkedTask{
         return this._completed
     }
     set completed(v){
-        let bodyFormData = new FormData();
-        bodyFormData.append('completed', v);
-        axios.put(this.url, bodyFormData)
-        return this._completed = v
+        if(v){
+            axios.get(this.url + "/complete").then(() => this.fetchData())
+        }else{
+            axios.get(this.url + "/incomplete").then(() => this.fetchData())
+        }
     }
     get description(){
         return this._description

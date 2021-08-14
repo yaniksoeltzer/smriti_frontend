@@ -41,7 +41,6 @@ export default {
   methods: {
     saveOrder: function(){
       let currentOrder = this.tasks.map((task) => task.id)
-      console.log("save order", currentOrder)
       localStorage.setItem(this.localStorageKey,JSON.stringify(currentOrder))
     },
     orderTasks(tasks){
@@ -50,26 +49,21 @@ export default {
       }
       let orderedTasks = []
       let savedOrder = localStorage.getItem(this.localStorageKey)
-      console.log("savedOrder[raw]",savedOrder)
       if(savedOrder == null){
         savedOrder = []
       }else{
         savedOrder = JSON.parse(savedOrder)
       }
-      console.log("savedOrder",savedOrder)
       for (let taskID of savedOrder){
         orderedTasks.push(...tasks.filter((task) => task.id === taskID))
       }
       let newTasks = tasks.filter((task) => !savedOrder.includes(task.id))
-      console.log("newTasks",newTasks)
       orderedTasks.push(...newTasks)
-      console.log("provide",orderedTasks)
       return orderedTasks
     },
   },
   mounted(){
     this.taskList.taskChanged.on("tasks", () =>{
-      console.log("update tasks")
       this.tasks = this.orderTasks(this.taskList.tasks)
       this.saveOrder()
     })

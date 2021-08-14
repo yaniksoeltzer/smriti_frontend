@@ -8,7 +8,7 @@ export default class TaskFactory{
 
     async createTaskFromID(taskID){
         if (taskID in this.allTasks){
-            console.log("reuse task", taskID)
+            //console.log("reuse task", taskID)
             return this.allTasks[taskID]
         }
         let url = this.apiUrl +"/" + taskID
