@@ -11,7 +11,7 @@ export function playOnFirstInteraction(audio){
         // Autoplay was prevented
         console.log("Autoplay was prevented, delay until first user input")
         function singleTimeEvent(){
-            new Audio(require("../assets/sound_lock_in.mp3")).play()
+            new Audio(require("../../assets/sound_lock_in.mp3")).play()
             document.removeEventListener("click", singleTimeEvent)
             console.log("delayed autoplay continued")
         }

@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import SatisfyingCheckbox from "@/components/SatisfyingCheckbox";
-import {useModelWrapper} from "@/components/ModelWrapper";
+import SatisfyingCheckbox from "@/components/PomoTodos/SatisfyingCheckbox";
+import {useModelWrapper} from "@/components/PomoTodos/ModelWrapper";
 export default {
   name: "Todo",
   components: {SatisfyingCheckbox},

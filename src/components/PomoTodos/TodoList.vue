@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import Todo from "@/components/Todo";
+import Todo from "@/components/PomoTodos/Todo";
 import axios from "axios";
 export default {
   name: "TodoList",

@@ -18,7 +18,7 @@
       </div>
   </div>
   </div>
-  <ul>
+  <ul v-if="false">
     <li>state:{{ state }}</li>
     <li>startedAt:{{ currentPomo.startedAt }}</li>
     <li>finishedAt:{{ currentPomo.finishedAt }}</li>
@@ -29,18 +29,18 @@
 
 <script>
 import 'mosha-vue-toastify/dist/style.css'
-import EasyTimer from "@/components/easyTimer";
-import PomoApi from "@/components/pomoApi";
-import {pad, playOnFirstInteraction} from "@/components/common";
+import EasyTimer from "@/components/PomoTimer/easyTimer";
+import PomoApi from "@/components/PomoTimer/pomoApi";
+import {pad, playOnFirstInteraction} from "@/components/PomoTimer/common";
 
 
 function playLockIn(){
-  let audio = new Audio(require("../assets/sound_lock_in.mp3"))
+  let audio = new Audio(require("../../assets/sound_lock_in.mp3"))
   playOnFirstInteraction(audio)
 }
 
 function playSuccess(){
-  let audio = new Audio(require("../assets/sound_success.mp3"))
+  let audio = new Audio(require("../../assets/sound_success.mp3"))
   playOnFirstInteraction(audio)
 }
 

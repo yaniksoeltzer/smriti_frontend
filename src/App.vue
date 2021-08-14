@@ -1,11 +1,11 @@
 <template>
-  <PomoTimer v-if="false" apiUrl="http://127.0.0.1:5000/api/pomo"/>
+  <PomoTimer v-if="true" apiUrl="http://127.0.0.1:5000/api/pomo"/>
   <TodoList apiUrl="http://127.0.0.1:5000/api/task/pomo_tasks"/>
 </template>
 
 <script>
-import PomoTimer from './components/PomoTimer.vue'
-import TodoList from "./components/TodoList.vue"
+import PomoTimer from './components/PomoTimer/PomoTimer.vue'
+import TodoList from "./components/PomoTodos/TodoList.vue"
 
 export default {
   name: 'App',

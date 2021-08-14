@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {useModelWrapper} from "@/components/ModelWrapper";
+import {useModelWrapper} from "@/components/PomoTodos/ModelWrapper";
 
 export default {
   props:{
