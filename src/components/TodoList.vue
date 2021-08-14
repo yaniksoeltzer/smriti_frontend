@@ -14,81 +14,21 @@
 
 <script>
 import Todo from "@/components/Todo";
+import axios from "axios";
 export default {
   name: "TodoList",
   components: {Todo},
   props:{
     apiUrl: String
   },
-  methods: {
-    toggleTask: function(task_id, value){
-      console.log("set task ",task_id," completion to", value)
-      this.tasks.filter(t => t.task_id === task_id).forEach((t)=>{
-        t.completed = value
-      })
-    }
-  },
   data(){
     return {
-      tasks: [
-      {
-        "completed": false,
-        "description": "OT - never done",
-        "task_id": 1,
-        "task_type": "one_time"
-      },
-      {
-        "completed": true,
-        "description": "ED - done today",
-        "task_id": 7,
-        "task_type": "every_day"
-      },
-      {
-        "completed": false,
-        "description": "OT - never done (2)",
-        "task_id": 2,
-        "task_type": "one_time"
-      },
-      {
-        "completed": true,
-        "description": "ED - done today and yesterday",
-        "task_id": 9,
-        "task_type": "every_day"
-      },
-      {
-        "completed": false,
-        "description": "ED - never done",
-        "task_id": 5,
-        "task_type": "every_day"
-      },
-      {
-        "completed": true,
-        "description": "OT - done today",
-        "task_id": 3,
-        "task_type": "one_time"
-      },
-      {
-        "completed": false,
-        "description": "ED - done yesterday",
-        "task_id": 8,
-        "task_type": "every_day"
-      },
-      {
-        "completed": false,
-        "description": "ED - never done (2)",
-        "task_id": 6,
-        "task_type": "every_day"
-      },
-      {
-        "completed": true,
-        "description": "OT - done yesterday",
-        "task_id": 4,
-        "task_type": "one_time"
-      }
-    ]
+      tasks: []
     }
-  }
-
+  },
+  async mounted(){
+    await axios.get(this.apiUrl).then(response => this.tasks = response.data)
+  },
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <PomoTimer v-if="false" apiUrl="http://127.0.0.1:5000/api/pomo"/>
-  <TodoList apiUrl="http://127.0.0.1:5000/api/todo"/>
+  <TodoList apiUrl="http://127.0.0.1:5000/api/task/pomo_tasks"/>
 </template>
 
 <script>
