@@ -6,8 +6,7 @@
           :list="tasks"
           class="list-group"
           ghost-class="ghost"
-          @start="dragging = true"
-          @end="dragging = false"
+          @end="saveOrder()"
       >
         <template #item="{ element }">
           <Todo
@@ -35,13 +34,50 @@ export default {
   },
   data(){
     return {
-      tasks: []
+      tasks: [],
+      localStorageKey: this.name +" " + "order"
     }
   },
-  mounted() {
+  methods: {
+    saveOrder: function(){
+      let currentOrder = this.tasks.map((task) => task.id)
+      console.log("save order", currentOrder)
+      localStorage.setItem(this.localStorageKey,JSON.stringify(currentOrder))
+    },
+    orderTasks(tasks){
+      if(tasks.length <= 1){
+        return tasks
+      }
+      let orderedTasks = []
+      let savedOrder = localStorage.getItem(this.localStorageKey)
+      console.log("savedOrder[raw]",savedOrder)
+      if(savedOrder == null){
+        savedOrder = []
+      }else{
+        savedOrder = JSON.parse(savedOrder)
+      }
+      console.log("savedOrder",savedOrder)
+      for (let taskID of savedOrder){
+        orderedTasks.push(...tasks.filter((task) => task.id === taskID))
+      }
+      let newTasks = tasks.filter((task) => !savedOrder.includes(task.id))
+      console.log("newTasks",newTasks)
+      orderedTasks.push(...newTasks)
+      console.log("provide",orderedTasks)
+      return orderedTasks
+    },
+  },
+  mounted(){
     this.taskList.taskChanged.on("tasks", () =>{
-      this.tasks = this.taskList.tasks
+      console.log("update tasks")
+      this.tasks = this.orderTasks(this.taskList.tasks)
+      this.saveOrder()
     })
+    let tasks = this.taskList.tasks
+    if(tasks.length > 0){
+      this.tasks = this.orderTasks(this.taskList.tasks)
+      this.saveOrder()
+    }
   }
 }
 </script>

@@ -5,6 +5,7 @@ export default class LinkedTask{
         this.url = url
         this._completed = false
         this._description = "NOT SET JET"
+        this.id = "NOT JET SET"
     }
     async fetchData(){
         console.log("fetch task from", this.url)
@@ -13,6 +14,7 @@ export default class LinkedTask{
             .then(taskData => {
                 this._completed =  false
                 this._description = taskData["description"]
+                this.id = taskData["id"]
             })
     }
 
