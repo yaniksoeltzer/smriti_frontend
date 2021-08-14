@@ -1,7 +1,9 @@
 <template>
-  <div class="m-1 pb-0 task-item list-group-item">
+  <div class="p-2 m-1 list-group-item d-flex flex-row ">
     <SatisfyingCheckbox v-model:checked="checked_" />
-    <span class="d-inline align-top todo-item-description" >{{description}}</span>
+    <span>
+      <span class="d-inline align-top todo-item-description" >{{description}}</span>
+    </span>
   </div>
 </template>
 
@@ -25,8 +27,6 @@ export default {
 </script>
 
 <style scoped>
-.task-item  {
-}
 
 .todo-item-description{
   top: 15px;
@@ -34,7 +34,4 @@ export default {
   margin-left: 20px;
 }
 
-.strike-through {
-  text-decoration: line-through
-}
 </style>
