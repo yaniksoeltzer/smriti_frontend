@@ -1,9 +1,9 @@
 <template>
-  <h1 class="pt-5" >{{  taskList.name }}</h1>
+  <h1 class="pt-5" >{{ name }}</h1>
   <span class="d-flex justify-content-center">
     <ul class="p-0" style="width: 15cm">
       <draggable
-          :list="taskList.tasks"
+          :list="tasks"
           class="list-group"
           ghost-class="ghost"
           @start="dragging = true"
@@ -18,20 +18,31 @@
       </draggable>
   </ul>
   </span>
-
+  {{tasks}}
 </template>
 
 <script>
-import TaskList from "@/components/PomoTodos/TaskList";
 import draggable from "vuedraggable";
 import Todo from "@/components/PomoTodos/Todo";
+import TaskList from "@/components/PomoTodos/TaskList";
 
 export default {
   name: "TodoList",
   components: {Todo, draggable},
   props:{
-    taskList: TaskList
+    name: String,
+    taskList: TaskList,
   },
+  data(){
+    return {
+      tasks: []
+    }
+  },
+  mounted() {
+    this.taskList.taskChanged.on("tasks", () =>{
+      this.tasks = this.taskList.tasks
+    })
+  }
 }
 </script>
 

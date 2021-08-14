@@ -1,24 +1,31 @@
 import axios from "axios";
 
 export default class LinkedTask{
-    constructor(taskData, apiUrl) {
-        this.apiUrl = apiUrl
-        this.taskData = taskData
+    constructor(url) {
+        this.url = url
+        this._completed = false
+        this._description = "NOT SET JET"
     }
-    get taskID(){
-        return this.taskData.task_id
+    async fetchData(){
+        console.log("fetch task from", this.url)
+        await axios.get(this.url)
+            .then(response => response.data)
+            .then(taskData => {
+                this._completed =  false
+                this._description = taskData["description"]
+            })
     }
 
     get completed(){
-        return this.taskData.completed
+        return this._completed
     }
     set completed(v){
-        var bodyFormData = new FormData();
+        let bodyFormData = new FormData();
         bodyFormData.append('completed', v);
-        axios.put(this.apiUrl +"/"+ this.taskData.url, bodyFormData)
-        return this.taskData.completed = v
+        axios.put(this.url, bodyFormData)
+        return this._completed = v
     }
     get description(){
-        return this.taskData.description
+        return this._description
     }
 }

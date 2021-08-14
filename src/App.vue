@@ -1,35 +1,18 @@
 <template>
   <PomoTimer v-if="false" apiUrl="http://127.0.0.1:5000/api/pomo"/>
-  <TodoList v-bind:taskList="pomoTasks"/>
+  <TodoList name="Pomo List" :task-list="this.pomoTaskList"/>
+  <TodoList name="Every Day Tasks" :task-list="this.everDayTaskList"/>
   <!--
-  <TodoList v-bind:taskList="everyDayTasks"/>
-  <TodoList v-bind:taskList="oneTimeTasks"/>
+    <TodoList v-bind:taskList="everyDayTaskList"/>
+    <TodoList v-bind:taskList="oneTimeTasks"/>
   -->
 </template>
 
 <script>
 import PomoTimer from './components/PomoTimer/PomoTimer.vue'
 import TodoList from "./components/PomoTodos/TodoList.vue"
+import TaskFactory from "@/components/PomoTodos/TaskFactory"
 import TaskList from "@/components/PomoTodos/TaskList";
-import axios from "axios";
-import LinkedTask from "@/components/PomoTodos/LinkedTask";
-
-let apiUrl = "http://127.0.0.1:5000/api/task"
-
-class TaskContainer{
-  allTasks = []
-  createTaskFromData(taskData){
-    let sameIDTasks = this.allTasks.filter(task => task.taskID === taskData.task_id)
-    if (sameIDTasks.length > 0){
-      return sameIDTasks[0]
-    }else{
-      let newTask = new LinkedTask(taskData, apiUrl)
-      this.allTasks.push(newTask)
-      return newTask
-    }
-  }
-}
-
 
 export default {
   name: 'App',
@@ -38,27 +21,15 @@ export default {
     TodoList
   },
   async mounted(){
-    let taskContainer = new TaskContainer()
-
-    let pomoTasks = await axios.get(apiUrl+ "/" + "pomo_tasks")
-        .then(response => response.data)
-        .then(tasks => tasks.map(taskData => taskContainer.createTaskFromData(taskData) ))
-    let everyDayTasks = await axios.get(apiUrl+ "/" + "every_day_tasks")
-        .then(response => response.data)
-        .then(tasks => tasks.map(taskData => taskContainer.createTaskFromData(taskData) ))
-    let oneTimeTasks = await axios.get(apiUrl+ "/" + "one_time_tasks")
-        .then(response => response.data)
-        .then(tasks => tasks.map(taskData => taskContainer.createTaskFromData(taskData) ))
-
-    this.pomoTasks.tasks = pomoTasks
-    this.everyDayTasks.tasks = everyDayTasks
-    this.oneTimeTasks.tasks = oneTimeTasks
   },
   data(){
+    let apiUrl = "http://127.0.0.1:5000/api"
+    let taskFactory = new TaskFactory(apiUrl + "/task")
     return {
-      pomoTasks: new TaskList([], "Pomo Tasks"),
-      everyDayTasks: new TaskList([], "Every Day Tasks"),
-      oneTimeTasks: new TaskList([], "One Time Tasks"),
+      apiUrl: apiUrl,
+      taskFactory: taskFactory,
+      pomoTaskList: new TaskList(apiUrl + "/task_list/pomo", taskFactory),
+      everDayTaskList: new TaskList(apiUrl + "/task_list/every_day_task", taskFactory)
     }
   }
 }

@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "mosha-vue-toastify": "^1.0.17",
+    "signal-js": "^2.4.0",
     "vue": "^3.0.0",
     "vuedraggable": "^4.0.3"
   },
