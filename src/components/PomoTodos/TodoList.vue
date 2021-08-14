@@ -8,12 +8,15 @@
       />
     </div>
   </ul>
-  {{tasks}}
+  <div v-for="task in tasks" v-bind:key="task.task_id+'display'" >
+    {{task}}
+  </div>
   <form class="js-form"></form>
 </template>
 
 <script>
 import Todo from "@/components/PomoTodos/Todo";
+import LinkedTask from "./LinkedTask"
 import axios from "axios";
 export default {
   name: "TodoList",
@@ -27,7 +30,9 @@ export default {
     }
   },
   async mounted(){
-    await axios.get(this.apiUrl).then(response => this.tasks = response.data)
+    this.tasks = await axios.get(this.apiUrl+ "/pomo_tasks")
+        .then(response => response.data)
+        .then(tasks => tasks.map(taskData => new LinkedTask(taskData, this.apiUrl)))
   },
 }
 </script>
