@@ -1,7 +1,7 @@
 <template>
   <div class="m-1 pb-0 task-item list-group-item">
-    <SatisfyingCheckbox v-model:checked="checkedModel" />
-    <input type="text" class="d-inline align-top todo-item-description" v-bind:value="description">
+    <SatisfyingCheckbox v-model:checked="checked_" />
+    <span class="d-inline align-top todo-item-description" >{{description}}</span>
   </div>
 </template>
 
@@ -18,7 +18,7 @@ export default {
   emits:["update:completed"],
   setup(props, { emit }) {
     return {
-      checkedModel: useModelWrapper(props, emit, "completed"),
+      checked_: useModelWrapper(props, emit, "completed"),
     }
   }
 }
@@ -34,10 +34,7 @@ export default {
   margin-left: 20px;
 }
 
-
-.completed > .todo-item-description{
+.strike-through {
   text-decoration: line-through
-}
-.not-completed > .todo-item-description{
 }
 </style>
