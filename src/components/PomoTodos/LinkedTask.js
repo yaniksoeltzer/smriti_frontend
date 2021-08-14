@@ -2,24 +2,20 @@ import axios from "axios";
 
 export default class LinkedTask{
     constructor(taskData, apiUrl) {
-        this.taskData = {
-            "completed": false,
-            "description": "NOT UPDATED JET",
-            "task_id": 0,
-            "task_type": "one_time"
-        }
         this.apiUrl = apiUrl
         this.taskData = taskData
+    }
+    get taskID(){
+        return this.taskData.task_id
     }
 
     get completed(){
         return this.taskData.completed
     }
     set completed(v){
-        console.log("update you know what")
         var bodyFormData = new FormData();
         bodyFormData.append('completed', v);
-        axios.put(this.apiUrl + "/" + this.taskData.task_type + "_tasks/" + this.taskData.task_id, bodyFormData)
+        axios.put(this.apiUrl +"/"+ this.taskData.url, bodyFormData)
         return this.taskData.completed = v
     }
     get description(){
