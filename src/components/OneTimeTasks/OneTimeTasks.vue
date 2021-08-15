@@ -17,6 +17,7 @@
             <OneTimeTaskEntry
                 v-model:description="element.description"
                 v-model:completed="element.completed"
+                @onAddToPomo="() => addToPomo(element)"
             />
           </template>
         </template>
@@ -43,7 +44,7 @@ export default {
   },
   data(){
     return {
-      name: "Every Day Tasks",
+      name: "Open Tasks",
       taskEntries:[],
       blackListedIDs: [],
       showCompleted : false,
@@ -59,6 +60,9 @@ export default {
   methods: {
     toggleCompleted: function(){
       this.showCompleted =! this.showCompleted
+    },
+    addToPomo: function (task){
+      this.blacklistApi.addTaskID(task.id)
     },
     hideTask: function(task){
       if(this.blackListedIDs.includes(task.id)){

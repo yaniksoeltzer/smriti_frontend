@@ -1,9 +1,9 @@
 <template>
-  <div class="p-2 m-1 list-group-item d-flex flex-row " :class="alreadyDoneToday?'alreadyDoneToday':''" v-on:dblclick="onAddToPomo">
+  <div class="p-2 m-1 list-group-item d-flex flex-row " :class="alreadyDoneToday?'alreadyDoneToday':''" v-on:dblclick="onAddToPomo" style="height: 55px">
     <span class="me-auto">
       <div class="align-top todo-item-description me-auto" >{{description}}</div>
     </span>
-    <button class="btn btn-outline-primary" v-on:click.prevent="onAddToPomo"> > </button>
+    <button class="btn btn-outline-primary" v-if="!alreadyDoneToday" v-on:click.prevent="onAddToPomo"> > </button>
   </div>
 </template>
 
