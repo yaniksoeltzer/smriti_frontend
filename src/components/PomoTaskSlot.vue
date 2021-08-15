@@ -5,7 +5,7 @@
         class="list-group"
         ghost-class="ghost"
         item-key="id"
-        :group="{ name: 'tasks', put: true, pull: false }"
+        :group="{ name: 'tasks', put: true, pull: true }"
         @change="onChange"
     >
       <template #item="{ element }">

@@ -13,7 +13,7 @@
           ghost-class="ghost"
           animation="200"
           item-key="id"
-          :group="{ name: 'tasks', pull: 'clone', put: checkPut }"
+          :group="{ name: 'tasks', pull: true, put: true }"
           @change="onInternalChange"
       >
         <template #item="{ element }">
