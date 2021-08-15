@@ -2,9 +2,11 @@
   <h1 class="pt-5" >{{ name }}</h1>
   <span class="d-flex justify-content-center">
     <ul class="p-0" style="width: 15cm">
-      <div v-if="taskListEntries.length === 0">
-          PASE HERE
-        </div>
+      <div v-if="taskListEntries.length === 0" class="task-drop-box row align-items-center">
+        <span class="col-6 mx-auto">
+          Drop Tasks Here
+        </span>
+      </div>
       <draggable
           :list="taskListEntries"
           class="list-group"
@@ -109,4 +111,11 @@ function orderTaskListEntries(taskListEntries, taskOrder){
 </script>
 
 <style scoped>
+.task-drop-box{
+  background: #808080;
+  height: 3cm;
+  opacity: 0.4;
+  border-radius: 10px;
+  border-style: dashed;
+}
 </style>
