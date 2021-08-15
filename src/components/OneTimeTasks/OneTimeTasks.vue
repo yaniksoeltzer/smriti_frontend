@@ -50,7 +50,6 @@ export default {
   async mounted() {
     this.blacklistApi.onChanged.on("changed", async ()=>{
       this.blackListedIDs = await this.blacklistApi.getTaskIDs()
-      console.log("blacklist has changed!", this.blackListedIDs)
     })
     this.blackListedIDs = await this.blacklistApi.getTaskIDs()
     this.taskEntries = await this.oneTimeTaskApi.fetchAll()
