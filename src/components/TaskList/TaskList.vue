@@ -29,15 +29,15 @@
 <script>
 import draggable from "vuedraggable";
 import TaskListEntry from "@/components/TaskList/TaskListEntry";
-import axios from "axios";
 import TaskApi from "@/components/TaskApi";
+import TaskListApi from "@/components/TaskList/TaskListApi";
 
 export default {
   name: "TodoList",
   components: {TaskListEntry, draggable},
   props:{
     name: String,
-    apiUrl: String,
+    taskListApi: TaskListApi,
     taskListEntryApi: TaskApi,
   },
   data(){
@@ -52,11 +52,7 @@ export default {
     }
   },
   async mounted() {
-    let taskIDs = await axios.get(this.apiUrl)
-        .then(response => response.data)
-    let taskListEntries = await Promise.all(taskIDs.map(async (taskID) => await this.taskListEntryApi.getTask(taskID)))
-    let order = this.getSavedOrder()
-    this.taskListEntries = orderTaskListEntries(taskListEntries, order)
+    await this.updateTaskListEntries()
   },
   methods:{
     getSavedOrder(){
@@ -75,26 +71,22 @@ export default {
         localStorage.setItem(this.localStorageKey, JSON.stringify(currentOrder))
       }
     },
-    async onTaskPut(task){
-      console.log("put task", task , "into", this.apiUrl)
-      let taskID = task.id
-      let data = new FormData()
-      data.append("task_id", taskID)
-      await axios.post(this.apiUrl, data)
+    async updateTaskListEntries(){
+      let taskIDs = await this.taskListApi.getTaskIDs()
+      let taskListEntries = await Promise.all(taskIDs.map(async (taskID) => await this.taskListEntryApi.getTask(taskID)))
+      let order = this.getSavedOrder()
+      this.taskListEntries = orderTaskListEntries(taskListEntries, order)
     },
     onRemove(task){
-      let id = task["id"].split("/")[1]
-      console.log("onRemove", task)
-      axios.delete(this.apiUrl + "/" + id)
-      this.taskListEntries = this.taskListEntries.filter((entry) => entry.id !== task["id"])
+      this.taskListApi.removeTaskID(task.id)
+      this.updateTaskListEntries()
     },
     async onInternalChange(event){
       console.log(event)
       if('added' in event){
-        let taskID = event.added.element.id
-        let data = new FormData()
-        data.append("task_id", taskID)
-        await axios.post(this.apiUrl, data)
+        let task = event.added.element
+        console.log("put task", task , "into", this.apiUrl)
+        await this.taskListApi.addTaskID(task.id)
       }
       this.saveCurrentOrder()
     },
