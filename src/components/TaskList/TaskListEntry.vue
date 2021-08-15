@@ -38,4 +38,9 @@ export default {
   margin-left: 20px;
 }
 
+.ghost {
+  opacity: 0.1;
+  background: #c8ebfb;
+}
+
 </style>

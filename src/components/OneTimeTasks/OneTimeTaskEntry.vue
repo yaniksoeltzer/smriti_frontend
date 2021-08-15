@@ -1,6 +1,7 @@
 <template>
-  <div class="p-2 m-1 list-group-item d-flex flex-row ">
+  <div class="p-2 m-1 list-group-item d-flex flex-row " :class="completed?'completed':''">
     <div class="align-top todo-item-description" >{{description}}</div>
+    {{completed}}
   </div>
 </template>
 
@@ -10,6 +11,7 @@ export default {
   name: "TaskListEntry",
   props: {
     description: String,
+    completed: Boolean
   },
 }
 </script>
@@ -20,5 +22,10 @@ export default {
   margin-left: 20px;
   height: 20px;
 }
+
+.completed{
+  background: gray;
+}
+
 
 </style>

@@ -9,6 +9,7 @@
           :list="taskListEntries"
           class="list-group"
           ghost-class="ghost"
+          animation="200"
           :group="{ name: 'tasks', pull: 'clone', put: true }"
           @change="onInternalChange"
       >
