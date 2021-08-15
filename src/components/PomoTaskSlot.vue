@@ -4,6 +4,7 @@
         :list="taskList"
         class="list-group"
         ghost-class="ghost"
+        item-key="id"
         :group="{ name: 'tasks', put: true }"
         @change="onChange"
     >

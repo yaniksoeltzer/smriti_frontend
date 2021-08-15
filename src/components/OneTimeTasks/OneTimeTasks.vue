@@ -9,6 +9,7 @@
           :list="taskEntries"
           class="list-group"
           ghost-class="ghost"
+          item-key="id"
           :group="{ name: 'tasks', pull: 'clone', put: false }"
       >
         <template #item="{ element }" >

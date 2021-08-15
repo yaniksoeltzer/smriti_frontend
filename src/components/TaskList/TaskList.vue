@@ -12,6 +12,7 @@
           class="list-group"
           ghost-class="ghost"
           animation="200"
+          item-key="id"
           :group="{ name: 'tasks', pull: 'clone', put: true }"
           @change="onInternalChange"
       >
@@ -86,6 +87,13 @@ export default {
       console.log(event)
       if('added' in event){
         let task = event.added.element
+
+        //let sameIDTasks = this.taskListEntries.filter(e => e.id === task.id)
+        //if(sameIDTasks.length > 0){
+        //  return
+        //
+        //}
+
         console.log("put task", task , "into", this.apiUrl)
         await this.taskListApi.addTaskID(task.id)
       }
