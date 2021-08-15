@@ -11,6 +11,7 @@
         <template #item="{ element }">
           <TaskEntry
               v-model:description="element.description"
+              v-model:already-done-today="element.completed"
           />
         </template>
       </draggable>
