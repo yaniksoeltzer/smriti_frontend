@@ -1,10 +1,9 @@
 <template>
-  <div class="p-2 m-1 list-group-item d-flex flex-row ">
+  <div class="p-2 m-1 list-group-item d-flex flex-row " v-on:dblclick="onPromote">
     <SatisfyingCheckbox v-model:checked="checked_" />
-    <span class="me-auto">
+    <span class="me-auto" >
       <span class="d-inline align-top todo-item-description" >{{description}}</span>
     </span>
-    <button class="btn btn-outline-primary" v-on:click.prevent="onPromote">^</button>
     <button class="btn btn-outline-danger" v-on:click.prevent="onRemove">REMOVE</button>
   </div>
 </template>
