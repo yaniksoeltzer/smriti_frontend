@@ -1,5 +1,6 @@
 <template>
-  <PomoTimer v-if="false" apiUrl="http://127.0.0.1:5000/api/pomo"/>
+  <PomoTimer apiUrl="http://127.0.0.1:5000/api/pomo"/>
+  <PomoTaskSlot v-model:pomo-task="pomoTask"/>
   <TaskList name="Pomo List" :taskListEntryApi="taskApi" :task-list-api="pomoTaskListApi"/>
   <EveryDayTasks :every-day-task-api="everyDayTaskApi" :blacklist-api="pomoTaskListApi"/>
   <OneTimeTasks :one-time-task-api="oneTimeTaskApi" :blacklist-api="pomoTaskListApi"/>
@@ -14,6 +15,7 @@ import OneTimeTaskApi from "@/components/OneTimeTasks/OneTimeTaskApi";
 import EveryDayTasks from "@/components/EveryDayTasks/EveryDayTasks";
 import OneTimeTasks from "@/components/OneTimeTasks/OneTimeTasks";
 import TaskListApi from "@/components/TaskList/TaskListApi";
+import PomoTaskSlot from "@/components/PomoTaskSlot";
 
 export default {
   name: 'App',
@@ -22,6 +24,7 @@ export default {
     TaskList,
     EveryDayTasks,
     OneTimeTasks,
+    PomoTaskSlot,
   },
   data(){
     let apiUrl = "http://127.0.0.1:5000/api"
@@ -30,6 +33,7 @@ export default {
     let genericTaskApi = new TaskApi(oneTimeTaskApi, everyDayTaskApi)
     let pomoTaskListApi = new TaskListApi(apiUrl + "/task_list/pomo")
     return {
+      pomoTask: undefined,
       apiUrl: "http://127.0.0.1:5000/api",
       taskApi : genericTaskApi,
       oneTimeTaskApi: oneTimeTaskApi,
