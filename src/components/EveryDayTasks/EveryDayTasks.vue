@@ -19,7 +19,6 @@
       </draggable>
   </ul>
   </span>
-  {{taskEntries}}
 </template>
 
 <script>

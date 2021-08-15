@@ -2,7 +2,7 @@
   <PomoTimer v-if="false" apiUrl="http://127.0.0.1:5000/api/pomo"/>
   <TaskList name="Pomo List" :taskListEntryApi="taskApi" :task-list-api="pomoTaskListApi"/>
   <EveryDayTasks :every-day-task-api="everyDayTaskApi" :blacklist-api="pomoTaskListApi"/>
-  <OneTimeTasks :one-time-task-api="oneTimeTaskApi"/>
+  <OneTimeTasks :one-time-task-api="oneTimeTaskApi" :blacklist-api="pomoTaskListApi"/>
 </template>
 
 <script>

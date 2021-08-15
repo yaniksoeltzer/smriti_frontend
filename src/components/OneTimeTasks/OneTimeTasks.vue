@@ -12,7 +12,7 @@
           :group="{ name: 'tasks', pull: 'clone', put: false }"
       >
         <template #item="{ element }" >
-          <template v-if="showCompleted || !element.completed" >
+          <template v-if="!blackListedIDs.includes(element.id) && ( showCompleted || !element.completed)" >
             <OneTimeTaskEntry
                 v-model:description="element.description"
                 v-model:completed="element.completed"
@@ -22,7 +22,6 @@
       </draggable>
   </ul>
   </span>
-  {{taskEntries}}
 </template>
 
 <script>
@@ -30,6 +29,7 @@ import draggable from "vuedraggable";
 import TaskApi from "@/components/TaskApi";
 import OneTimeTaskApi from "@/components/OneTimeTasks/OneTimeTaskApi";
 import OneTimeTaskEntry from "@/components/OneTimeTasks/OneTimeTaskEntry";
+import TaskListApi from "@/components/TaskList/TaskListApi";
 
 export default {
   name: "TodoList",
@@ -37,15 +37,22 @@ export default {
   props:{
     oneTimeTaskApi: OneTimeTaskApi,
     taskListEntryApi: TaskApi,
+    blacklistApi: TaskListApi,
   },
   data(){
     return {
       name: "Every Day Tasks",
       taskEntries:[],
+      blackListedIDs: [],
       showCompleted : false,
     }
   },
   async mounted() {
+    this.blacklistApi.onChanged.on("changed", async ()=>{
+      this.blackListedIDs = await this.blacklistApi.getTaskIDs()
+      console.log("blacklist has changed!", this.blackListedIDs)
+    })
+    this.blackListedIDs = await this.blacklistApi.getTaskIDs()
     this.taskEntries = await this.oneTimeTaskApi.fetchAll()
   },
   methods: {
