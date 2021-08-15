@@ -14,6 +14,7 @@
             <TaskEntry
                 v-model:description="element.description"
                 v-model:already-done-today="element.completed"
+                @onAddToPomo="() => addToPomo(element)"
             />
           </template>
         </template>
@@ -53,6 +54,9 @@ export default {
     this.taskEntries = await this.everyDayTaskApi.fetchAll()
   },
   methods:{
+    addToPomo: function (task){
+      this.blacklistApi.addTaskID(task.id)
+    },
     hideTask: function(task){
       if(this.blackListedIDs.includes(task.id)){
         return true
