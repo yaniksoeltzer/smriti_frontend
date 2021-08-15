@@ -23,6 +23,7 @@ export default class TaskListApi{
         data.append("task_id", taskID)
         await axios.post(this.apiUrl, data)
         this._taskIDs.push(taskID)
+        console.log("trigger the onChanged changed")
         this.onChanged.trigger("changed")
     }
 

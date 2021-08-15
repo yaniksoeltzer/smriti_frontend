@@ -93,14 +93,9 @@ export default {
       let elapsedTime = 0
       if(this.currentPomo.startedAt != null){
         let until = this.currentPomo.pausedAt || new Date()
-        console.log("c until:", until)
-        console.log(this.currentPomo)
         elapsedTime = until - this.currentPomo.startedAt - this.currentPomo.pausedTime
-        console.log("c elapsed time:", elapsedTime)
       }
-      console.log("c currentPomo duration:", this.currentPomo.duration)
       let remainingTime = this.currentPomo.duration - elapsedTime
-      console.log("c remaining time:", remainingTime)
       this.timer = new EasyTimer(remainingTime)
       if(this.state === "running"){
         this.timer.continue()

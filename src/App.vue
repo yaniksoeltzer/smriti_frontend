@@ -1,9 +1,9 @@
 <template>
   <PomoTimer apiUrl="http://127.0.0.1:5000/api/pomo"/>
-  <PomoTaskSlot v-model:pomo-task="pomoTask"/>
-  <TaskList name="Pomo List" :taskListEntryApi="taskApi" :task-list-api="pomoTaskListApi"/>
-  <EveryDayTasks :every-day-task-api="everyDayTaskApi" :blacklist-api="pomoTaskListApi"/>
-  <OneTimeTasks :one-time-task-api="oneTimeTaskApi" :blacklist-api="pomoTaskListApi"/>
+  <PomoTaskSlot v-model:pomo-task="pomoTask" v-model:pomo-task-list-api="pomoTaskListApi"/>
+  <TaskList name="Pomo List" :taskListEntryApi="taskApi" v-model:task-list-api="pomoTaskListApi"/>
+  <EveryDayTasks :every-day-task-api="everyDayTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
+  <OneTimeTasks :one-time-task-api="oneTimeTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
 </template>
 
 <script>
@@ -15,7 +15,7 @@ import OneTimeTaskApi from "@/components/OneTimeTasks/OneTimeTaskApi";
 import EveryDayTasks from "@/components/EveryDayTasks/EveryDayTasks";
 import OneTimeTasks from "@/components/OneTimeTasks/OneTimeTasks";
 import TaskListApi from "@/components/TaskList/TaskListApi";
-import PomoTaskSlot from "@/components/PomoTaskSlot";
+import PomoTaskSlot from "@/components/PomoTaskSlot/PomoTaskSlot";
 
 export default {
   name: 'App',

@@ -55,6 +55,9 @@ export default {
   },
   async mounted() {
     await this.updateTaskListEntries()
+    this.taskListApi.onChanged.on("changed", async ()=>{
+      await this.updateTaskListEntries()
+    })
   },
   methods:{
     getSavedOrder(){
@@ -64,7 +67,6 @@ export default {
       }else{
         savedOrder = JSON.parse(savedOrder)
       }
-      console.log(savedOrder)
       return savedOrder
     },
     saveCurrentOrder(){
@@ -83,17 +85,15 @@ export default {
       await this.taskListApi.removeTaskID(task.id)
       await this.updateTaskListEntries()
     },
-    checkPut(event){
-      console.log(event)
-      return true
-    },
     async onInternalChange(event){
-      console.log(event)
       if('added' in event){
         let task = event.added.element
-
-        console.log("put task", task , "into", this.apiUrl)
         await this.taskListApi.addTaskID(task.id)
+      }
+      if('removed' in event){
+        let task = event.removed.element
+        console.log("remove", task.id)
+        await this.taskListApi.removeTaskID(task.id)
       }
       this.saveCurrentOrder()
     },

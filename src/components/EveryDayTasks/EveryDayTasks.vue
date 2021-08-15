@@ -10,7 +10,7 @@
           :group="{ name: 'tasks', pull: 'clone', put: false }"
       >
         <template #item="{ element }">
-          <template v-if="!blackListedIDs.includes(element.id)">
+          <template v-if="!hideTask(element)">
             <TaskEntry
                 v-model:description="element.description"
                 v-model:already-done-today="element.completed"
@@ -36,6 +36,7 @@ export default {
     everyDayTaskApi: EveryDayTaskApi,
     taskListEntryApi: TaskApi,
     blacklistApi: TaskListApi,
+    pomoTask: String,
   },
   data(){
     return {
@@ -50,6 +51,19 @@ export default {
     })
     this.blackListedIDs = await this.blacklistApi.getTaskIDs()
     this.taskEntries = await this.everyDayTaskApi.fetchAll()
+  },
+  methods:{
+    hideTask: function(task){
+      if(this.blackListedIDs.includes(task.id)){
+        return true
+      }
+      if(this.pomoTask != null){
+        if(task.id === this.pomoTask.id){
+          return true
+        }
+      }
+      return false
+    }
   }
 }
 

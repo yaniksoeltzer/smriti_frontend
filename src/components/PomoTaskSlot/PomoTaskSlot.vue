@@ -9,7 +9,7 @@
         @change="onChange"
     >
       <template #item="{ element }">
-        <TaskListEntry
+        <PomoTask
             v-model:description="element.description"
             v-model:completed="completed"
             @onRemove="removeCurrent"
@@ -21,17 +21,17 @@
 
 <script>
 import draggable from "vuedraggable";
-import TaskListEntry from "@/components/TaskList/TaskListEntry";
 import {computed} from "@vue/reactivity";
 import {useModelWrapper} from "@/components/ModelWrapper";
+import PomoTask from "@/components/PomoTaskSlot/PomoTask";
 
 export default {
   name: "PomoTaskSlot",
   components: {
     draggable,
-    TaskListEntry,
+    PomoTask,
   },
-  props: ["pomoTask"],
+  props: ["pomoTask", "pomoTaskListApi"],
   emits: ["update:pomoTask"],
   computed:{
     taskList: function(){
@@ -68,19 +68,18 @@ export default {
     }
   },
   methods: {
-    removeCurrent: function(){
-      this.$emit('update:pomoTask', undefined)
-    },
     onChange: function(event){
-      console.log(event)
       if('added' in event){
-        let newPomoTask = event.added.element
-        this.pomoTask_ = newPomoTask
+        this.pomoTask_ = event.added.element
       }
       if('removed' in event){
         this.removeCurrent()
       }
-    }
+    },
+    removeCurrent: function(){
+      this.pomoTaskListApi.addTaskID(this.pomoTask_.id)
+      this.pomoTask_ = undefined
+    },
   }
 }
 </script>

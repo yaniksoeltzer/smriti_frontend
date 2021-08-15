@@ -13,7 +13,7 @@
           :group="{ name: 'tasks', pull: 'clone', put: false }"
       >
         <template #item="{ element }" >
-          <template v-if="!blackListedIDs.includes(element.id) && ( showCompleted || !element.completed)" >
+          <template v-if="!hideTask(element)" >
             <OneTimeTaskEntry
                 v-model:description="element.description"
                 v-model:completed="element.completed"
@@ -39,6 +39,7 @@ export default {
     oneTimeTaskApi: OneTimeTaskApi,
     taskListEntryApi: TaskApi,
     blacklistApi: TaskListApi,
+    pomoTask: String,
   },
   data(){
     return {
@@ -58,7 +59,23 @@ export default {
   methods: {
     toggleCompleted: function(){
       this.showCompleted =! this.showCompleted
-    }
+    },
+    hideTask: function(task){
+      if(this.blackListedIDs.includes(task.id)){
+        return true
+      }
+      if(this.pomoTask != null){
+        if(task.id === this.pomoTask.id){
+          return true
+        }
+      }
+      if(!this.showCompleted){
+        if(task.completed){
+          return true
+        }
+      }
+      return false
+    },
   }
 }
 
