@@ -4,7 +4,8 @@
     <span class="me-auto">
       <span class="d-inline align-top todo-item-description" >{{description}}</span>
     </span>
-    <button class="btn btn-outline-danger" v-on:click.prevent="onRemove()">REMOVE</button>
+    <button class="btn btn-outline-primary" v-on:click.prevent="onPromote">^</button>
+    <button class="btn btn-outline-danger" v-on:click.prevent="onRemove">REMOVE</button>
   </div>
 </template>
 
@@ -20,11 +21,12 @@ export default {
     description: String,
     completed: Boolean
   },
-  emits:["update:completed", "onRemove"],
+  emits:["update:completed", "onRemove", "onPromote"],
   setup(props, { emit }) {
     return {
       checked_: useModelWrapper(props, emit, "completed"),
-      onRemove: ()=> emit("onRemove")
+      onRemove: ()=> emit("onRemove"),
+      onPromote: () => emit("onPromote"),
     }
   }
 }

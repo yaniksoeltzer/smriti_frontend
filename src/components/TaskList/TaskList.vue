@@ -21,6 +21,7 @@
               v-model:description="element.description"
               v-model:completed="element.completed"
               @onRemove="()=> onRemove(element)"
+              @onPromote="() => onPromote(element)"
           />
         </template>
       </draggable>
@@ -41,6 +42,7 @@ export default {
     name: String,
     taskListApi: TaskListApi,
     taskListEntryApi: TaskApi,
+    pomoTask: String,
   },
   data(){
     return {
@@ -58,6 +60,17 @@ export default {
     this.taskListApi.onChanged.on("changed", async ()=>{
       await this.updateTaskListEntries()
     })
+  },
+  setup(props, { emit }) {
+    return {
+      onPromote: (task) => {
+        if(props['pomoTask'] != null){
+          props['taskListApi'].addTaskID(props['pomoTask'].id)
+        }
+        props['taskListApi'].removeTaskID(task.id)
+        emit("update:pomoTask", task)
+      }
+    }
   },
   methods:{
     getSavedOrder(){
