@@ -5,7 +5,7 @@
         class="list-group"
         ghost-class="ghost"
         item-key="id"
-        :group="{ name: 'tasks', put: true }"
+        :group="{ name: 'tasks', put: true, pull: false }"
         @change="onChange"
     >
       <template #item="{ element }">
@@ -76,8 +76,6 @@ export default {
       if('added' in event){
         let newPomoTask = event.added.element
         this.pomoTask_ = newPomoTask
-        console.log(this.pomoTask_)
-        console.log(this.pomoTask)
       }
       if('removed' in event){
         this.removeCurrent()

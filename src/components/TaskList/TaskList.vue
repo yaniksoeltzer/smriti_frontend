@@ -13,7 +13,7 @@
           ghost-class="ghost"
           animation="200"
           item-key="id"
-          :group="{ name: 'tasks', pull: 'clone', put: true }"
+          :group="{ name: 'tasks', pull: 'clone', put: checkPut }"
           @change="onInternalChange"
       >
         <template #item="{ element }">
@@ -83,16 +83,14 @@ export default {
       await this.taskListApi.removeTaskID(task.id)
       await this.updateTaskListEntries()
     },
+    checkPut(event){
+      console.log(event)
+      return true
+    },
     async onInternalChange(event){
       console.log(event)
       if('added' in event){
         let task = event.added.element
-
-        //let sameIDTasks = this.taskListEntries.filter(e => e.id === task.id)
-        //if(sameIDTasks.length > 0){
-        //  return
-        //
-        //}
 
         console.log("put task", task , "into", this.apiUrl)
         await this.taskListApi.addTaskID(task.id)
