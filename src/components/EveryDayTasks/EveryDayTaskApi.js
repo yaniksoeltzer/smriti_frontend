@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-export class OneTimeTask{
+export class EveryDayTask{
     constructor(url) {
         this.url = url
         this._completed = false
@@ -9,9 +9,18 @@ export class OneTimeTask{
         this.id = "NOT JET SET"
     }
     async fetchData(){
+        //console.log("fetch task from", this.url)
         let taskData = await axios.get(this.url)
             .then(response => response.data)
-        this._completed = taskData["completed_at"] != null
+        this.lastCompletion = new Date(taskData["lastcompletion"])
+        if(this.lastCompletion == null){
+            this._completed = false
+        }else{
+            let oneDay = 1000 * 60* 60 * 24
+            let timeSinceLastCompletion = new Date().getTime() - this.lastCompletion.getTime()
+            this._completed = timeSinceLastCompletion < oneDay;
+        }
+        this.id = "every_day_task/"+taskData["task_id"]
         this._description = taskData["description"]
     }
     get completed(){
@@ -30,7 +39,7 @@ export class OneTimeTask{
 }
 
 
-export default class OneTimeTaskApi {
+export default class EveryDayTaskApi {
     tasks = {}
     constructor(apiUrl) {
         this.apiUrl = apiUrl
@@ -41,7 +50,7 @@ export default class OneTimeTaskApi {
             return this.tasks[taskID]
         }
         let taskUrl = this.apiUrl + "/" + taskID
-        let task = new OneTimeTask(taskUrl)
+        let task = new EveryDayTask(taskUrl)
         await task.fetchData()
         this.tasks[taskID] = task
         return task
