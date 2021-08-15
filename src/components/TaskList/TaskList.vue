@@ -77,9 +77,9 @@ export default {
       let order = this.getSavedOrder()
       this.taskListEntries = orderTaskListEntries(taskListEntries, order)
     },
-    onRemove(task){
-      this.taskListApi.removeTaskID(task.id)
-      this.updateTaskListEntries()
+    async onRemove(task){
+      await this.taskListApi.removeTaskID(task.id)
+      await this.updateTaskListEntries()
     },
     async onInternalChange(event){
       console.log(event)
