@@ -48,6 +48,13 @@ export default class OneTimeTaskApi {
         return task
     }
 
+    async createTask(description){
+        let url = this.apiUrl + "/"
+        let taskData = new FormData();
+        taskData.append('description', description)
+        return await axios.post(url, taskData).then(response => response.data)
+    }
+
     async fetchAll(){
         let tasksData = await axios.get(this.apiUrl)
             .then(response => response.data)
