@@ -1,5 +1,5 @@
 <template>
-  <div id="pomoTimer" class="card m-5 mx-auto" style="height: 19em; width: 30em">
+  <div class="card m-5 mx-auto timerCard">
     <div class="card-body position-relative">
       <p class="h3 position-absolute top-0 start-50 p-3 m-0 translate-middle-x">
         <span>{{ currentPomo.pomoType }}</span>
@@ -136,6 +136,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.timerCard{
+  height: 19em;
+}
 
 .timeView{
   font-size: 8em

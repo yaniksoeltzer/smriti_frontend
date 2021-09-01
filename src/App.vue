@@ -1,9 +1,11 @@
 <template>
-  <PomoTimer apiUrl="http://127.0.0.1:5000/api/pomo"/>
-  <PomoTaskSlot v-model:pomo-task="pomoTask" v-model:pomo-task-list-api="pomoTaskListApi" />
-  <TaskList name="Pomo List" :taskListEntryApi="taskApi" v-model:task-list-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
-  <EveryDayTasks :every-day-task-api="everyDayTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
-  <OneTimeTasks :one-time-task-api="oneTimeTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
+  <div class="container main-container">
+    <PomoTimer apiUrl="http://127.0.0.1:5000/api/pomo"/>
+    <PomoTaskSlot v-model:pomo-task="pomoTask" v-model:pomo-task-list-api="pomoTaskListApi" />
+    <TaskList name="Pomo List" :taskListEntryApi="taskApi" v-model:task-list-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
+    <EveryDayTasks v-if="false" :every-day-task-api="everyDayTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
+    <OneTimeTasks v-if="false" :one-time-task-api="oneTimeTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
+  </div>
 </template>
 
 <script>
@@ -45,6 +47,11 @@ export default {
 </script>
 
 <style>
+
+.main-container {
+  max-width: 40em;
+}
+
 
 body{
     background: rgb(244,236,225)

@@ -1,7 +1,7 @@
 <template>
   <h1 class="pt-5" >{{ name }}</h1>
-  <span class="d-flex justify-content-center">
-    <ul class="p-0" style="width: 15cm">
+  <span class="justify-content-center">
+    <ul class="p-0">
       <div v-if="taskListEntries.length === 0" class="task-drop-box row align-items-center">
         <span class="col-6 mx-auto">
           Drop Tasks Here
