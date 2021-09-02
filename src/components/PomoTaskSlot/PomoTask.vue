@@ -2,7 +2,7 @@
   <div class="p-2 m-1 list-group-item d-flex flex-row " v-on:dblclick.prevent="onRemove">
     <SatisfyingCheckbox v-model:checked="checked_" />
     <span class="me-auto" >
-      <span class="d-inline align-top todo-item-description" >{{description}}</span>
+      <span class="d-inline align-top todo-item-description" >{{task.description}}</span>
     </span>
     <button class="btn btn-outline-danger" v-on:click.prevent="onRemove">V</button>
   </div>
@@ -10,20 +10,34 @@
 
 <script>
 import SatisfyingCheckbox from "@/components/TaskList/SatisfyingCheckbox";
-import {useModelWrapper} from "@/components/ModelWrapper";
+import {computed} from "@vue/reactivity";
+
 export default {
   name: "TaskListEntry",
   components: {
     SatisfyingCheckbox
   },
   props: {
-    description: String,
-    completed: Boolean
+    task: Object,
   },
-  emits:["update:completed", "onRemove"],
+  emits:["onComplete", "onInComplete", "onRemove"],
   setup(props, { emit }) {
     return {
-      checked_: useModelWrapper(props, emit, "completed"),
+      checked_: computed({
+        get: () => {
+          if('completedAt' in props.task){
+            return props.task.completedAt != null
+          }
+          return false
+        },
+        set: (value) => {
+          if(value){
+            emit('onComplete')
+          }else{
+            emit('onInComplete')
+          }
+        }
+      }),
       onRemove: ()=> emit("onRemove")
     }
   }

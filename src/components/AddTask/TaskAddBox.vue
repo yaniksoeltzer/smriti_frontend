@@ -5,28 +5,23 @@
   />
   <TaskCreationBox
     v-if="taskCreationWindowOpen"
-    v-bind:oneTimeTaskApi="taskApi.oneTimeTaskApi"
-    v-on:taskCreated="onTaskCreated"
+    v-on:createTask="onCreateTask"
   />
 </template>
 
 <script>
 import TaskAddButton from "./TaskAddButton";
 import TaskCreationBox from "./TaskCreationBox";
-import TaskApi from "../TaskApi";
 
 export default {
   name: "TaskAddBox",
-  props:{
-    taskApi: TaskApi
-  },
   emits: [
-    "taskCreated"
+    "createTask"
   ],
   setup(props, { emit }) {
     return {
       notifyTaskCreated: (task) => {
-        emit("taskCreated", task)
+        emit("createTask", task)
       }
     }
   },
@@ -43,7 +38,7 @@ export default {
     openTaskCreationWindow(){
       this.taskCreationWindowOpen = true
     },
-    onTaskCreated(task){
+    onCreateTask(task){
       this.taskCreationWindowOpen = false
       this.notifyTaskCreated(task)
     }

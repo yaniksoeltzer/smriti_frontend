@@ -2,26 +2,29 @@
   <h1 class="pt-5" >{{ name }}</h1>
   <span class="justify-content-center">
     <ul class="p-0">
-      <div v-if="taskListEntries.length === 0" class="task-drop-box row align-items-center">
+      <div v-if="orderedTasks.length === 0" class="task-drop-box row align-items-center">
         <span class="col-6 mx-auto">
           Drop Tasks Here
         </span>
       </div>
       <draggable
-          :list="taskListEntries"
-          class="list-group"
-          ghost-class="ghost"
-          animation="200"
-          item-key="id"
-          :group="{ name: 'tasks', pull: true, put: true }"
-          @change="onInternalChange"
+        :list="orderedTasks"
+        class="list-group"
+        ghost-class="ghost"
+        animation="200"
+        item-key="_id"
+        :group="{ name: 'task', pull: true, put: true }"
+        @change="onInternalChange"
       >
         <template #item="{ element }">
           <TaskListEntry
-              v-model:description="element.description"
-              v-model:completed="element.completed"
-              @onRemove="()=> onRemove(element)"
-              @onPromote="() => onPromote(element)"
+            :description="element.description"
+            :completed="false"
+            :task="element"
+            @onRemove="()=> emitOnTaskRemove(element)"
+            @onComplete="() => emitOnTaskComplete(element)"
+            @onInComplete="() => emitOnTaskInComplete(element)"
+            @onPromote="() => emitOnTaskPromote(element)"
           />
         </template>
       </draggable>
@@ -32,87 +35,65 @@
 <script>
 import draggable from "vuedraggable";
 import TaskListEntry from "@/components/TaskList/TaskListEntry";
-import TaskApi from "@/components/TaskApi";
-import TaskListApi from "@/components/TaskList/TaskListApi";
 
 export default {
   name: "TodoList",
   components: {TaskListEntry, draggable},
   props:{
     name: String,
-    taskListApi: TaskListApi,
-    taskListEntryApi: TaskApi,
-    pomoTask: String,
+    tasks: Array,
   },
+  emits:[
+    "removeTask",
+    "completeTask",
+    "inCompleteTask",
+    "promoteTask",
+  ],
   data(){
+    let storageKey =  this.name + " " + "order"
+    let order = getSavedOrder(storageKey)
     return {
-      taskListEntries:[],
-      name_: this.name
+      storageKey: storageKey,
+      order: order,
     }
   },
   computed:{
-    localStorageKey: function(){
-      return this.name_ +" " + "order"
+    orderedTasks: function(){
+      console.log('recalculate ordered Tasks')
+      saveOrder(this.storageKey, this.order)
+      return orderTaskListEntries(this.tasks, this.order)
     }
-  },
-  async mounted() {
-    await this.updateTaskListEntries()
-    this.taskListApi.onChanged.on("changed", async ()=>{
-      await this.updateTaskListEntries()
-    })
   },
   setup(props, { emit }) {
     return {
-      onPromote: (task) => {
-        if(props['pomoTask'] != null){
-          props['taskListApi'].addTaskID(props['pomoTask'].id)
-        }
-        props['taskListApi'].removeTaskID(task.id)
-        emit("update:pomoTask", task)
-      }
+      emitOnTaskRemove: (task)=>{ emit('removeTask', task)},
+      emitOnTaskComplete: (task)=>{ emit('completeTask', task)},
+      emitOnTaskInComplete: (task)=>{ emit('inCompleteTask', task)},
+      emitOnTaskPromote: (task)=>{ emit('promoteTask', task)},
     }
   },
   methods:{
-    getSavedOrder(){
-      let savedOrder = localStorage.getItem(this.localStorageKey)
-      if(savedOrder == null){
-        savedOrder = []
-      }else{
-        savedOrder = JSON.parse(savedOrder)
-      }
-      return savedOrder
-    },
-    saveCurrentOrder(){
-      if(this.taskListEntries.length > 0 ) {
-        let currentOrder = this.taskListEntries.map((task) => task.url)
-        localStorage.setItem(this.localStorageKey, JSON.stringify(currentOrder))
-      }
-    },
-    async updateTaskListEntries(){
-      let taskIDs = await this.taskListApi.getTaskIDs()
-      let taskListEntries = await Promise.all(taskIDs.map(async (taskID) => await this.taskListEntryApi.getTask(taskID)))
-      let order = this.getSavedOrder()
-      this.taskListEntries = orderTaskListEntries(taskListEntries, order)
-    },
-    async onRemove(task){
-      await this.taskListApi.removeTaskID(task.id)
-      await this.updateTaskListEntries()
-    },
-    async onInternalChange(event){
-      if('added' in event){
-        let task = event.added.element
-        await this.taskListApi.addTaskID(task.id)
-      }
-      if('removed' in event){
-        let task = event.removed.element
-        console.log("remove", task.id)
-        await this.taskListApi.removeTaskID(task.id)
-      }
-      this.saveCurrentOrder()
+    async onInternalChange(){
+      this.order = this.orderedTasks.map((task) => task._id)
     },
   },
 }
 
+function saveOrder(storageKey, order){
+  if(order.length > 0 ) {
+    localStorage.setItem(storageKey, JSON.stringify(order))
+  }
+}
+
+function getSavedOrder(storageKey){
+  let savedOrder = localStorage.getItem(storageKey)
+  if(savedOrder == null){
+    savedOrder = []
+  }else{
+    savedOrder = JSON.parse(savedOrder)
+  }
+  return savedOrder
+}
 
 
 function orderTaskListEntries(taskListEntries, taskOrder){
@@ -121,9 +102,9 @@ function orderTaskListEntries(taskListEntries, taskOrder){
   }
   let orderedTasks = []
   for (let taskUrl of taskOrder){
-    orderedTasks.push(...taskListEntries.filter((task) => task.url === taskUrl))
+    orderedTasks.push(...taskListEntries.filter((task) => task._id === taskUrl))
   }
-  let newTasks = taskListEntries.filter((task) => !taskOrder.includes(task.url))
+  let newTasks = taskListEntries.filter((task) => !taskOrder.includes(task._id))
   orderedTasks.push(...newTasks)
   return orderedTasks
 }

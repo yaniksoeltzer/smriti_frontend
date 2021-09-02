@@ -1,5 +1,5 @@
 <template>
-  <div class="task-drop-slot" :class="pomoTask==null? 'empty':''">
+  <div class="task-drop-slot" :class="task==null? 'empty':''">
     <draggable
         :list="taskList"
         class="list-group"
@@ -10,9 +10,10 @@
     >
       <template #item="{ element }">
         <PomoTask
-            v-model:description="element.description"
-            v-model:completed="completed"
-            @onRemove="removeCurrent"
+            :task="element"
+            @onRemove="() => emitOnTaskRemove(element)"
+            @onComplete="() => emitOnTaskComplete(element)"
+            @onInComplete="() => emitOnTaskInComplete(element)"
         />
       </template>
     </draggable>
@@ -21,8 +22,6 @@
 
 <script>
 import draggable from "vuedraggable";
-import {computed} from "@vue/reactivity";
-import {useModelWrapper} from "@/components/ModelWrapper";
 import PomoTask from "@/components/PomoTaskSlot/PomoTask";
 
 export default {
@@ -31,43 +30,34 @@ export default {
     draggable,
     PomoTask,
   },
-  props: ["pomoTask", "pomoTaskListApi"],
-  emits: ["update:pomoTask"],
+  props: {
+    task: Object
+  },
+  emits: ["onPomoTaskRemove"],
   computed:{
     taskList: function(){
-      if(this.pomoTask == null){
+      if(this.task == null){
         return []
       }
-      return [this.pomoTask]
+      return [this.task]
     }
   },
   setup(props, { emit }) {
     return {
-      pomoTask_: useModelWrapper(props, emit, "pomoTask"),
-    }
-  },
-  data(){
-    return {
-      completed : computed({
-        get: () => {
-          if(this.pomoTask == null){
-            return false
-          }
-          return this.pomoTask.completed
-        },
-        set: (v) => {
-          if(v){
-            this.pomoTask_.completed = true
-            setTimeout(()=>{
-              this.removeCurrent()
-            }, 500)
-
-          }
-        }
-      })
+      emitOnTaskComplete: (task)=>{
+        emit('completeTask', task)
+        setTimeout(()=>{
+          emit('onPomoTaskRemove', task)
+        }, 500)
+      },
+      emitOnTaskInComplete: (task)=>{ emit('inCompleteTask', task)},
+      emitOnTaskRemove: (task)=>{ emit('onPomoTaskRemove', task)},
     }
   },
   methods: {
+    removePomoTask: function(){
+      this.pomoTask_ = undefined
+    },
     onChange: function(event){
       if('added' in event){
         this.pomoTask_ = event.added.element
@@ -75,10 +65,6 @@ export default {
       if('removed' in event){
         this.removeCurrent()
       }
-    },
-    removeCurrent: function(){
-      this.pomoTaskListApi.addTaskID(this.pomoTask_.id)
-      this.pomoTask_ = undefined
     },
   }
 }
