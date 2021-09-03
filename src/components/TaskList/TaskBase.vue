@@ -4,7 +4,7 @@
     <span class="me-auto" >
       <span class="d-inline align-top todo-item-description" >{{task.description}}</span>
     </span>
-    <button class="btn btn-outline-danger" v-on:click.prevent="onRemove">REMOVE</button>
+    <slot></slot>
   </div>
 </template>
 

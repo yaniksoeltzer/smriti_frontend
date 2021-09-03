@@ -1,44 +1,86 @@
 <template>
+  <div v-if="loading">LOADING</div>
   <div class="container main-container">
-    <PomoTimer apiUrl="http://127.0.0.1:5000/api/pomo"/>
+    <PomoTimer
+      apiUrl="http://127.0.0.1:5000/api/pomo"
+    />
     <PomoTaskSlot
       v-model:task="pomoTask"
-      v-on:completeTask="completeTask"
       v-on:inCompleteTask="inCompleteTask"
       v-on:onPomoTaskRemove="clearPomoTask"
     />
-    <TaskList
-      name="Pomo List"
-      v-model:tasks="pomoTasks"
-      v-on:removeTask="removeTaskFromList"
-      v-on:completeTask="completeTask"
-      v-on:inCompleteTask="inCompleteTask"
-      v-on:promoteTask="promoteTask"
-    />
-    <TaskAddBox
-      v-on:createTask="onTaskAdd"
-    />
+    <h1 class="pt-5" data-bs-toggle="collapse" data-bs-target="#PomoTaskListCollapse" >
+      Pomo List
+    </h1>
+    <div class="collapse show" id="PomoTaskListCollapse">
+      <TaskList
+        storageID="pomoTaskList"
+        v-model:tasks="pomoTasks"
+        v-on:removeTask="removeTaskFromList"
+        v-on:inCompleteTask="inCompleteTask"
+        v-on:promoteTask="promoteTask"
+      />
+      <TaskAddBox
+        v-on:createTask="onTaskAdd"
+      />
+    </div>
+
     <EveryDayTasks v-if="false" :every-day-task-api="everyDayTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
     <OneTimeTasks v-if="false" :one-time-task-api="oneTimeTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
   </div>
   <div v-for="task in pomoTasks" :key="task._id">
     {{task}}
   </div>
+
 </template>
 
 <script>
 import PomoTimer from './components/PomoTimer/PomoTimer.vue'
 import TaskList from "./components/TaskList/TaskList.vue"
-import TaskApi from "@/components/TaskApi"
-import EveryDayTaskApi from "@/components/EveryDayTasks/EveryDayTaskApi";
-import OneTimeTaskApi from "@/components/OneTimeTasks/OneTimeTaskApi";
 import EveryDayTasks from "@/components/EveryDayTasks/EveryDayTasks";
 import OneTimeTasks from "@/components/OneTimeTasks/OneTimeTasks";
-import TaskListApi from "@/components/TaskList/TaskListApi";
 import PomoTaskSlot from "@/components/PomoTaskSlot/PomoTaskSlot";
 import TaskAddBox from "./components/AddTask/TaskAddBox";
 import axios from "axios";
+import {watch} from "vue";
+
 let apiUrl = "http://127.0.0.1:5000/api"
+
+
+class TaskListWatcher{
+
+  constructor(taskList) {
+    this.taskList = taskList
+    for (let task of this.taskList) {
+      this.watchTask(task)
+    }
+
+    watch(taskList, async (oldTaskList, newTaskList) => {
+      let addedTasks = newTaskList.filter(task => !('_id' in task))
+      for(const task of addedTasks){
+        console.log('task was added!')
+        let response = await axios.post(apiUrl + "/task", taskToData(task))
+        task["_id"] = response.data
+        this.watchTask(task)
+      }
+    })
+  }
+
+
+  watchTask(task){
+    //console.log("start watching ", task['_id'])
+    watch(task, (oldTaskData, newTaskData) => {
+      console.info("updated task", oldTaskData, newTaskData);
+      axios.put(apiUrl + "/task/" + task['_id'] , taskToData(task))
+        .then(response => response.data)
+    })
+  }
+
+
+
+}
+
+
 
 export default {
   name: 'App',
@@ -51,25 +93,17 @@ export default {
     PomoTaskSlot,
   },
   data(){
-    let everyDayTaskApi = new EveryDayTaskApi(apiUrl+"/task/every_day_task")
-    let oneTimeTaskApi = new OneTimeTaskApi(apiUrl+"/task/one_time_task")
-    let genericTaskApi = new TaskApi(oneTimeTaskApi, everyDayTaskApi)
-    let pomoTaskListApi = new TaskListApi(apiUrl + "/task_list/pomo")
-    axios.get(apiUrl + "/task")
-      .then(response => response.data)
-      .then(tasks => this.tasks=tasks)
     return {
-      tasks:[],
+      loading: true,
+      tasks: undefined,
       pomoTask: undefined,
-      apiUrl: "http://127.0.0.1:5000/api",
-      taskApi : genericTaskApi,
-      oneTimeTaskApi: oneTimeTaskApi,
-      everyDayTaskApi: everyDayTaskApi,
-      pomoTaskListApi: pomoTaskListApi
     }
   },
   computed:{
     pomoTasks: function (){
+      if (this.tasks == null){
+        return []
+      }
       return this.tasks.filter(
         (t) => {
           if('tags' in t){
@@ -79,48 +113,52 @@ export default {
         })
     }
   },
+  watch: {
+  },
+  mounted(){
+    axios.get(apiUrl + "/task")
+      .then(response => response.data)
+      .then((tasks) => {
+        this.tasks = tasks
+        new TaskListWatcher(this.tasks)
+        return tasks
+      })
+      .finally(() => this.loading = false)
+
+  },
   methods:{
-    taskToData(task){
-      let data = new FormData()
-      for (let key in task ) {
-        data.append(key, task[key]);
-      }
-      console.log(data)
-      return data
-    },
     clearPomoTask(){
       this.pomoTask = undefined
     },
-    async updateTask(task){
-      await axios.put(apiUrl + "/task/" + task['_id'] , this.taskToData(task))
-        .then(response => response.data)
-    },
     async onTaskAdd(task){
       task['tags'] = ['pomo']
-      let taskID = await axios.post(apiUrl + "/task", this.taskToData(task))
-        .then(response => response.data)
-      task["_id"] = taskID
       this.tasks.push(task)
     },
     async removeTaskFromList(task){
       task['tags'] = task['tags'].filter(tag => tag !== 'pomo')
       console.log("remove Task from list", task)
-      await this.updateTask(task)
+      //await this.updateTask(task)
     },
-    async completeTask(task){
-      task['completedAt'] = new Date().toISOString()
-      await this.updateTask(task)
-    },
+
     async inCompleteTask(task){
       delete task.completedAt
-      await this.updateTask(task)
+      //await this.updateTask(task)
     },
     async promoteTask(task){
       this.pomoTask = task
-      console.log(task)
     }
   },
 }
+
+
+function taskToData(task){
+  let data = new FormData()
+  for (let key in task ) {
+    data.append(key, task[key]);
+  }
+  return data
+}
+
 </script>
 
 <style>

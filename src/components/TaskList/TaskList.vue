@@ -1,5 +1,4 @@
 <template>
-  <h1 class="pt-5" >{{ name }}</h1>
   <span class="justify-content-center">
     <ul class="p-0">
       <div v-if="orderedTasks.length === 0" class="task-drop-box row align-items-center">
@@ -8,7 +7,7 @@
         </span>
       </div>
       <draggable
-        :list="orderedTasks"
+        :list="wrappedTasks"
         class="list-group"
         ghost-class="ghost"
         animation="200"
@@ -18,12 +17,8 @@
       >
         <template #item="{ element }">
           <TaskListEntry
-            :description="element.description"
-            :completed="false"
-            :task="element"
+            v-model:task="element.task"
             @onRemove="()=> emitOnTaskRemove(element)"
-            @onComplete="() => emitOnTaskComplete(element)"
-            @onInComplete="() => emitOnTaskInComplete(element)"
             @onPromote="() => emitOnTaskPromote(element)"
           />
         </template>
@@ -40,17 +35,15 @@ export default {
   name: "TodoList",
   components: {TaskListEntry, draggable},
   props:{
-    name: String,
+    storageID: String,
     tasks: Array,
   },
   emits:[
     "removeTask",
-    "completeTask",
-    "inCompleteTask",
     "promoteTask",
   ],
   data(){
-    let storageKey =  this.name + " " + "order"
+    let storageKey =  this.storageID + " " + "order"
     let order = getSavedOrder(storageKey)
     return {
       storageKey: storageKey,
@@ -58,8 +51,10 @@ export default {
     }
   },
   computed:{
+    wrappedTasks: function(){
+      return this.orderedTasks.map(task => {return  {task:task}})
+    },
     orderedTasks: function(){
-      console.log('recalculate ordered Tasks')
       saveOrder(this.storageKey, this.order)
       return orderTaskListEntries(this.tasks, this.order)
     }
@@ -67,14 +62,13 @@ export default {
   setup(props, { emit }) {
     return {
       emitOnTaskRemove: (task)=>{ emit('removeTask', task)},
-      emitOnTaskComplete: (task)=>{ emit('completeTask', task)},
-      emitOnTaskInComplete: (task)=>{ emit('inCompleteTask', task)},
       emitOnTaskPromote: (task)=>{ emit('promoteTask', task)},
     }
   },
   methods:{
     async onInternalChange(){
-      this.order = this.orderedTasks.map((task) => task._id)
+      console.log('on')
+      this.order = this.wrappedTasks.map((wrapper) => wrapper.task._id)
     },
   },
 }
