@@ -9,12 +9,12 @@
         @change="onChange"
     >
       <template #item="{ element }">
-        <PomoTask
-            :task="element"
-            @onRemove="() => emitOnTaskRemove(element)"
-            @onComplete="() => emitOnTaskComplete(element)"
-            @onInComplete="() => emitOnTaskInComplete(element)"
-        />
+        <TaskBase
+          :task="element"
+          v-on:onPromote="() => emitOnTaskRemove(element)"
+        >
+          <button class="btn btn-outline-danger" v-on:click.prevent="() => emitOnTaskRemove(element)">V</button>
+        </TaskBase>
       </template>
     </draggable>
   </div>
@@ -22,13 +22,13 @@
 
 <script>
 import draggable from "vuedraggable";
-import PomoTask from "@/components/PomoTaskSlot/PomoTask";
+import TaskBase from "@/components/TaskList/TaskBase";
 
 export default {
   name: "PomoTaskSlot",
   components: {
     draggable,
-    PomoTask,
+    TaskBase,
   },
   props: {
     task: Object
@@ -44,20 +44,11 @@ export default {
   },
   setup(props, { emit }) {
     return {
-      emitOnTaskComplete: (task)=>{
-        emit('completeTask', task)
-        setTimeout(()=>{
-          emit('onPomoTaskRemove', task)
-        }, 500)
-      },
       emitOnTaskInComplete: (task)=>{ emit('inCompleteTask', task)},
       emitOnTaskRemove: (task)=>{ emit('onPomoTaskRemove', task)},
     }
   },
   methods: {
-    removePomoTask: function(){
-      this.pomoTask_ = undefined
-    },
     onChange: function(event){
       if('added' in event){
         this.pomoTask_ = event.added.element

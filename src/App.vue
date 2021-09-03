@@ -28,9 +28,12 @@
     <EveryDayTasks v-if="false" :every-day-task-api="everyDayTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
     <OneTimeTasks v-if="false" :one-time-task-api="oneTimeTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
   </div>
-  <div v-for="task in pomoTasks" :key="task._id">
-    {{task}}
-  </div>
+  <template v-if="false" >
+    <div v-for="task in pomoTasks" :key="task._id">
+      {{task}}
+    </div>
+
+  </template>
 
 </template>
 

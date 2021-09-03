@@ -12,7 +12,6 @@
 import SatisfyingCheckbox from "@/components/TaskList/SatisfyingCheckbox";
 import { computed } from 'vue'
 
-
 export default {
   name: "TaskListEntry",
   components: {
@@ -21,7 +20,7 @@ export default {
   props: {
     task: Object,
   },
-  emits:["onRemove", "onPromote"],
+  emits:["onRemove", "onPromote", "update:task"],
   setup(props, { emit }) {
     return {
       checked_: computed({
@@ -58,9 +57,5 @@ export default {
   margin-left: 20px;
 }
 
-.ghost {
-  opacity: 0.1;
-  background: #c8ebfb;
-}
 
 </style>

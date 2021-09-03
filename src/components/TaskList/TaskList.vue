@@ -116,4 +116,10 @@ function orderTaskListEntries(taskListEntries, taskOrder){
   border-radius: 10px;
   border-style: dashed;
 }
+
+.ghost {
+  opacity: 0.1;
+  background: #c8ebfb;
+}
+
 </style>
