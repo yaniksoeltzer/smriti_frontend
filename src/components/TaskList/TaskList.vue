@@ -16,11 +16,12 @@
         @change="onInternalChange"
       >
         <template #item="{ element }">
-          <TaskListEntry
-            v-model:task="element.task"
-            @onRemove="()=> emitOnTaskRemove(element)"
-            @onPromote="() => emitOnTaskPromote(element)"
-          />
+          <TaskBase
+            :task="element.task"
+            v-on:onPromote="() => emitOnTaskPromote(element.task)"
+          >
+          <button class="btn btn-outline-danger" v-on:click.prevent="() => emitOnTaskRemove(element.task)">REMOVE</button>
+        </TaskBase>
         </template>
       </draggable>
   </ul>
@@ -29,11 +30,14 @@
 
 <script>
 import draggable from "vuedraggable";
-import TaskListEntry from "@/components/TaskList/TaskListEntry";
+import TaskBase from "@/components/TaskList/TaskBase";
 
 export default {
   name: "TodoList",
-  components: {TaskListEntry, draggable},
+  components: {
+    draggable,
+    TaskBase,
+  },
   props:{
     storageID: String,
     tasks: Array,

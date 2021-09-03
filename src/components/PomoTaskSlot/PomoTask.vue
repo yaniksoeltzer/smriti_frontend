@@ -1,43 +1,27 @@
 <template>
-  <div class="p-2 m-1 list-group-item d-flex flex-row " v-on:dblclick.prevent="onRemove">
-    <SatisfyingCheckbox v-model:checked="checked_" />
-    <span class="me-auto" >
-      <span class="d-inline align-top todo-item-description" >{{task.description}}</span>
-    </span>
+  <TaskBase
+    :task="task"
+    v-on:onRemove="onRemove"
+    v-on:onPromote="onRemove"
+  >
     <button class="btn btn-outline-danger" v-on:click.prevent="onRemove">V</button>
-  </div>
+  </TaskBase>
 </template>
 
 <script>
-import SatisfyingCheckbox from "@/components/TaskList/SatisfyingCheckbox";
-import {computed} from "@vue/reactivity";
+import TaskBase from "@/components/TaskList/TaskBase";
 
 export default {
   name: "TaskListEntry",
   components: {
-    SatisfyingCheckbox
+    TaskBase
   },
   props: {
     task: Object,
   },
-  emits:["onComplete", "onInComplete", "onRemove"],
+  emits:["onRemove"],
   setup(props, { emit }) {
     return {
-      checked_: computed({
-        get: () => {
-          if('completedAt' in props.task){
-            return props.task.completedAt != null
-          }
-          return false
-        },
-        set: (value) => {
-          if(value){
-            emit('onComplete')
-          }else{
-            emit('onInComplete')
-          }
-        }
-      }),
       onRemove: ()=> emit("onRemove")
     }
   }
@@ -45,16 +29,5 @@ export default {
 </script>
 
 <style scoped>
-
-.todo-item-description{
-  top: 15px;
-  position: absolute;
-  margin-left: 20px;
-}
-
-.ghost {
-  opacity: 0.1;
-  background: #c8ebfb;
-}
 
 </style>
