@@ -31,17 +31,17 @@
 import 'mosha-vue-toastify/dist/style.css'
 import EasyTimer from "@/components/PomoTimer/easyTimer";
 import PomoApi from "@/components/PomoTimer/pomoApi";
-import {pad, playOnFirstInteraction} from "@/components/PomoTimer/common";
+import {pad} from "@/components/PomoTimer/common";
 
 
 function playLockIn(){
   let audio = new Audio(require("../../assets/sound_lock_in.mp3"))
-  playOnFirstInteraction(audio)
+  audio.play().catch(()=>{})
 }
 
 function playSuccess(){
   let audio = new Audio(require("../../assets/sound_success.mp3"))
-  playOnFirstInteraction(audio)
+  audio.play().catch(()=>{})
 }
 
 export default {
@@ -99,21 +99,23 @@ export default {
       this.timer = new EasyTimer(remainingTime)
       if(this.state === "running"){
         this.timer.continue()
-        playLockIn()
       }
       this.updateRemainingTime()
     },
     async startPomo(){
       this.currentPomo = await this.pomoApi.startPomo(null)
       this.createNewTimer()
+      playLockIn()
     },
     async pausePomo(){
       this.currentPomo = await this.pomoApi.pausePomo()
       this.createNewTimer()
+      playLockIn()
     },
     async continuePomo(){
       this.currentPomo = await this.pomoApi.continuePomo()
       this.createNewTimer()
+      playLockIn()
     },
     async stopPomo(){
       await this.pomoApi.stopPomodoro()
