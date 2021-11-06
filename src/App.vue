@@ -2,7 +2,7 @@
   <div v-if="loading">LOADING</div>
   <div class="container main-container">
     <PomoTimer
-      apiUrl="https://smriti.denines.de/api/pomo_timer"
+      :apiUrl="POMO_TIMER_API"
     />
     <template v-if="false" >
       <PomoTaskSlot
@@ -51,8 +51,6 @@ import axios from "axios";
 import {watch} from "vue";
 
 let apiUrl = "http://127.0.0.1:5000/api"
-
-
 class TaskListWatcher{
 
   constructor(taskList) {
@@ -104,6 +102,7 @@ export default {
       loading: true,
       tasks: undefined,
       pomoTask: undefined,
+      POMO_TIMER_API: process.env.NODE_ENV === 'production' ? "/api/pomo_timer" : "http://localhost:5212/api/pomo_timer/"
     }
   },
   computed:{
