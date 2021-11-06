@@ -2,31 +2,33 @@
   <div v-if="loading">LOADING</div>
   <div class="container main-container">
     <PomoTimer
-      apiUrl="http://127.0.0.1:5000/api/pomo"
+      apiUrl="https://smriti.denines.de/api/pomo_timer"
     />
-    <PomoTaskSlot
-      v-model:task="pomoTask"
-      v-on:inCompleteTask="inCompleteTask"
-      v-on:onPomoTaskRemove="clearPomoTask"
-    />
-    <h1 class="pt-5" data-bs-toggle="collapse" data-bs-target="#PomoTaskListCollapse" >
-      Pomo List
-    </h1>
-    <div class="collapse show" id="PomoTaskListCollapse">
-      <TaskList
-        storageID="pomoTaskList"
-        v-model:tasks="pomoTasks"
-        v-on:removeTask="removeTaskFromList"
-        v-on:inCompleteTask="inCompleteTask"
-        v-on:promoteTask="promoteTask"
+    <template v-if="false" >
+      <PomoTaskSlot
+        v-model:task="pomoTask"
+        v-on:onPomoTaskRemove="clearPomoTask"
       />
-      <TaskAddBox
-        v-on:createTask="onTaskAdd"
-      />
-    </div>
+      <h1 class="pt-5" data-bs-toggle="collapse" data-bs-target="#PomoTaskListCollapse" >
+        Pomo List
+      </h1>
+      <div class="collapse show" id="PomoTaskListCollapse">
+        <TagTaskList tag="pomo" v-model:tasks="tasks" v-on:promoteTask="promoteTask"/>
+        <TaskAddBox v-on:createTask="onTaskAdd"/>
+        <TaggedTaskAddBox tag="pomo" />
+      </div>
+      <h1 class="pt-5" data-bs-toggle="collapse" data-bs-target="#BreakTaskListCollapse" >
+        Break List
+      </h1>
+      <div class="collapse show" id="BreakTaskListCollapse">
+        <TagTaskList tag="break" v-model:tasks="tasks" v-on:promoteTask="promoteTask"/>
+      </div>
 
-    <EveryDayTasks v-if="false" :every-day-task-api="everyDayTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
-    <OneTimeTasks v-if="false" :one-time-task-api="oneTimeTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
+
+      <EveryDayTasks v-if="false" :every-day-task-api="everyDayTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
+      <OneTimeTasks v-if="false" :one-time-task-api="oneTimeTaskApi" v-model:blacklist-api="pomoTaskListApi" v-model:pomo-task="pomoTask"/>
+    </template>
+
   </div>
   <template v-if="false" >
     <div v-for="task in pomoTasks" :key="task._id">
@@ -39,7 +41,8 @@
 
 <script>
 import PomoTimer from './components/PomoTimer/PomoTimer.vue'
-import TaskList from "./components/TaskList/TaskList.vue"
+import TagTaskList from "./components/TaskList/TagTaskList.vue"
+import TaggedTaskAddBox from "./components/AddTask/TaggedTaskAddBox.vue"
 import EveryDayTasks from "@/components/EveryDayTasks/EveryDayTasks";
 import OneTimeTasks from "@/components/OneTimeTasks/OneTimeTasks";
 import PomoTaskSlot from "@/components/PomoTaskSlot/PomoTaskSlot";
@@ -90,10 +93,11 @@ export default {
   components: {
     TaskAddBox,
     PomoTimer,
-    TaskList,
+    TagTaskList,
     EveryDayTasks,
     OneTimeTasks,
     PomoTaskSlot,
+    TaggedTaskAddBox,
   },
   data(){
     return {
@@ -143,10 +147,6 @@ export default {
       //await this.updateTask(task)
     },
 
-    async inCompleteTask(task){
-      delete task.completedAt
-      //await this.updateTask(task)
-    },
     async promoteTask(task){
       this.pomoTask = task
     }
