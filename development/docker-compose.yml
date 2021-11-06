@@ -1,0 +1,27 @@
+version: '3.3'
+services:
+
+  backend:
+    image: whale.denines.de/yanik/pomo_timer_backend
+    restart: always
+    networks:
+      - backend
+    env_file:
+      - db.env
+    ports:
+      - 5212:80
+
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - ./db.env
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-smriti-db.sql
+    networks:
+      - backend
+
+
+networks:
+  backend:
+    driver: bridge
