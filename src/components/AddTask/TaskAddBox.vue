@@ -1,18 +1,22 @@
 <template>
-  <TaskAddButton
-    v-if="!taskCreationWindowOpen"
-    v-on:taskAdd="openTaskCreationWindow"
-  />
-  <TaskCreationBox
-    v-if="taskCreationWindowOpen"
-    v-on:createTask="onCreateTask"
-  />
+  <div
+    v-click-outside="close"
+  >
+    <TaskAddButton
+      v-if="!taskCreationWindowOpen"
+      v-on:taskAdd="openTaskCreationWindow"
+    />
+    <TaskCreationBox
+      ref="taskDescriptionBox"
+      v-if="taskCreationWindowOpen"
+      v-on:createTask="onCreateTask"
+    />
+  </div>
 </template>
 
 <script>
 import TaskAddButton from "./TaskAddButton";
 import TaskCreationBox from "./TaskCreationBox";
-
 export default {
   name: "TaskAddBox",
   emits: [
@@ -31,7 +35,7 @@ export default {
   },
   data(){
     return {
-      taskCreationWindowOpen: true
+      taskCreationWindowOpen: false
     }
   },
   methods:{
@@ -41,7 +45,10 @@ export default {
     onCreateTask(task){
       this.taskCreationWindowOpen = false
       this.notifyTaskCreated(task)
-    }
+    },
+    close(){
+      this.taskCreationWindowOpen = false
+    },
   }
 }
 </script>

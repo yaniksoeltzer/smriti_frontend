@@ -2,7 +2,14 @@
     <div class="task-creation-box p-3">
       <div class="d-flex flex-row">
         <div class="me-auto" style="width:80%">
-          <input type="text" v-model="description" v-on:keyup.enter="createTask" class="form-control" placeholder="get stuff done">
+          <input
+            ref="taskDescriptionInput"
+            type="text"
+            v-model="description"
+            v-on:keyup.enter="createTask"
+            class="form-control"
+            placeholder="get stuff done"
+          >
         </div>
         <button type="submit" class="btn btn-primary" v-on:click.prevent="createTask">create</button>
       </div>
@@ -28,6 +35,9 @@ export default {
       description: "",
     }
   },
+  mounted() {
+    this.focusInput()
+  },
   methods:{
     async createTask(){
       let task = {
@@ -36,6 +46,10 @@ export default {
       }
       this._onAddTask(task)
       this.description=""
+    },
+    focusInput(){
+      console.log("focus input!",this.$refs.taskDescriptionInput)
+      this.$refs.taskDescriptionInput.focus()
     }
   }
 }
