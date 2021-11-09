@@ -1,12 +1,25 @@
 <template>
   <div v-if="loading">LOADING</div>
+
   <div class="container main-container">
     <PomoTimer
       :apiUrl="POMO_TIMER_API"
     />
-    <h1 class="pt-5" data-bs-toggle="collapse" data-bs-target="#PomoTaskListCollapse" >
-      Pomo List
-    </h1>
+    <div class="container">
+      <div class="pt-5 row">
+        <div class="col-4">
+        </div>
+        <div class="col-4">
+          <h1 class="col m-0" data-bs-toggle="collapse" data-bs-target="#PomoTaskListCollapse" >
+            Pomo List
+          </h1>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-end">
+          <datepicker class="col" v-model="current_date" style="width:90px"/>
+        </div>
+      </div>
+    </div>
+
     <TagTaskList tag="pomo" v-model:tasks="tasks" v-on:promoteTask="promoteTask"/>
     <TaskAddBox v-on:createTask="onTaskAdd"/>
 
@@ -55,8 +68,10 @@ import EveryDayTasks from "@/components/EveryDayTasks/EveryDayTasks";
 import OneTimeTasks from "@/components/OneTimeTasks/OneTimeTasks";
 import PomoTaskSlot from "@/components/PomoTaskSlot/PomoTaskSlot";
 import TaskAddBox from "./components/AddTask/TaskAddBox";
+import Datepicker from 'vue3-datepicker'
 import axios from "axios";
 import {watch} from "vue";
+
 
 class TaskListWatcher{
 
@@ -104,12 +119,14 @@ export default {
     OneTimeTasks,
     PomoTaskSlot,
     TaggedTaskAddBox,
+    Datepicker,
   },
   data(){
     return {
       loading: true,
       tasks: undefined,
       pomoTask: undefined,
+      current_date: new Date(),
       POMO_TIMER_API: process.env.NODE_ENV === 'production' ? "/api/pomo_timer" : "http://localhost:5212/api/pomo_timer",
       TASK_API: process.env.NODE_ENV === 'production' ? "/api/task" : "http://localhost:5213/api/task",
     }
