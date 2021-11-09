@@ -1,9 +1,8 @@
 version: '3.3'
 services:
 
-  backend:
+  pomo_timer_backend:
     image: whale.denines.de/yanik/pomo_timer_backend
-    restart: always
     networks:
       - backend
     env_file:
@@ -11,13 +10,29 @@ services:
     ports:
       - 5212:80
 
-  db:
+  pomo_timer_db:
     image: postgres
-    restart: always
     env_file:
       - ./db.env
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-smriti-db.sql
+    networks:
+      - backend
+
+  task_backend:
+    image: whale.denines.de/yanik/task_backend
+    networks:
+      - backend
+    env_file:
+      - db.env
+    ports:
+      - 5213:80
+
+  task_db:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     networks:
       - backend
 

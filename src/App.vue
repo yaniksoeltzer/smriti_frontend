@@ -4,8 +4,6 @@
     <PomoTimer
       :apiUrl="POMO_TIMER_API"
     />
-
-
     <h1 class="pt-5" data-bs-toggle="collapse" data-bs-target="#PomoTaskListCollapse" >
       Pomo List
     </h1>
@@ -60,11 +58,11 @@ import TaskAddBox from "./components/AddTask/TaskAddBox";
 import axios from "axios";
 import {watch} from "vue";
 
-let apiUrl = "http://127.0.0.1:5000/api"
 class TaskListWatcher{
 
-  constructor(taskList) {
+  constructor(taskList, taskAPI) {
     this.taskList = taskList
+    this.taskAPI = taskAPI
     for (let task of this.taskList) {
       this.watchTask(task)
     }
@@ -73,7 +71,7 @@ class TaskListWatcher{
       let addedTasks = newTaskList.filter(task => !('_id' in task))
       for(const task of addedTasks){
         console.log('task was added!')
-        let response = await axios.post(apiUrl + "/task", taskToData(task))
+        let response = await axios.post(this.taskAPI, taskToData(task))
         task["_id"] = response.data
         this.watchTask(task)
       }
@@ -85,7 +83,7 @@ class TaskListWatcher{
     //console.log("start watching ", task['_id'])
     watch(task, (oldTaskData, newTaskData) => {
       console.info("updated task", oldTaskData, newTaskData);
-      axios.put(apiUrl + "/task/" + task['_id'] , taskToData(task))
+      axios.put(this.taskAPI + "/" + task['_id'] , taskToData(task))
         .then(response => response.data)
     })
   }
@@ -112,7 +110,8 @@ export default {
       loading: true,
       tasks: undefined,
       pomoTask: undefined,
-      POMO_TIMER_API: process.env.NODE_ENV === 'production' ? "/api/pomo_timer" : "http://localhost:5212/api/pomo_timer/"
+      POMO_TIMER_API: process.env.NODE_ENV === 'production' ? "/api/pomo_timer" : "http://localhost:5212/api/pomo_timer",
+      TASK_API: process.env.NODE_ENV === 'production' ? "/api/task" : "http://localhost:5213/api/task",
     }
   },
   computed:{
@@ -132,11 +131,11 @@ export default {
   watch: {
   },
   mounted(){
-    axios.get(apiUrl + "/task")
+    axios.get(this.TASK_API)
       .then(response => response.data)
       .then((tasks) => {
         this.tasks = tasks
-        new TaskListWatcher(this.tasks)
+        new TaskListWatcher(this.tasks, this.TASK_API)
         return tasks
       })
       .finally(() => this.loading = false)
