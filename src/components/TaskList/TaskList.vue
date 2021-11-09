@@ -32,6 +32,18 @@
 import draggable from "vuedraggable";
 import TaskBase from "@/components/TaskList/TaskBase";
 
+
+function isSameDay(dateA, dateB){
+  return dateA.getDate() === dateB.getDate() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getFullYear() === dateB.getFullYear()
+}
+function AisBeforeBDay(dateA, dateB){
+  dateA.setHours(0,0,0,0);
+  dateB.setHours(0,0,0,0);
+  return dateA > dateB
+}
+
 export default {
   name: "TodoList",
   components: {
@@ -41,6 +53,7 @@ export default {
   props:{
     storageID: String,
     tasks: Array,
+    date: Date,
   },
   emits:[
     "removeTask",
@@ -56,12 +69,19 @@ export default {
   },
   computed:{
     wrappedTasks: function(){
-      return this.orderedTasks.map(task => {return  {task:task}})
+      return this.orderedTasks
+        .filter(task =>
+          !AisBeforeBDay(new Date(task.createdAt), this.date || new Date())
+          && (
+            ( !('completedAt' in task) && new Date(task.createdAt) )
+              ||  isSameDay(new Date(task.createdAt), this.date || new Date()))
+          )
+        .map(task => {return  {task:task}})
     },
     orderedTasks: function(){
       saveOrder(this.storageKey, this.order)
       return orderTaskListEntries(this.tasks, this.order)
-    }
+    },
   },
   setup(props, { emit }) {
     return {

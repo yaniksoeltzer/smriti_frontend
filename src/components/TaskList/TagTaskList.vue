@@ -4,6 +4,7 @@
     :tasks="tasksWithTag"
     v-on:removeTask="removeTaskFromList"
     v-on:promoteTask="emitOnTaskPromote"
+    :date="date"
   />
 </template>
 
@@ -18,6 +19,7 @@ export default {
   props:{
     tag: String,
     tasks: Array,
+    date: Date,
   },
   emits:[
     "promoteTask",

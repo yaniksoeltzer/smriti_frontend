@@ -5,27 +5,11 @@
     <PomoTimer
       :apiUrl="POMO_TIMER_API"
     />
-    <div class="container">
-      <div class="pt-5 row">
-        <div class="col-4">
-        </div>
-        <div class="col-4">
-          <h1 class="col m-0" data-bs-toggle="collapse" data-bs-target="#PomoTaskListCollapse" >
-            Pomo List
-          </h1>
-        </div>
-        <div class="col-4 d-flex align-items-center justify-content-end">
-          <datepicker class="col" v-model="current_date" style="width:90px"/>
-        </div>
-      </div>
-    </div>
 
-    <TagTaskList tag="pomo" v-model:tasks="tasks" v-on:promoteTask="promoteTask"/>
-    <TaskAddBox v-on:createTask="onTaskAdd"/>
-
-
-
-
+    <PomoTaskList
+      v-model:tasks="tasks"
+      v-on:createTask="addTask"
+    />
     <template v-if="false" >
       <PomoTaskSlot
         v-model:task="pomoTask"
@@ -67,10 +51,9 @@ import TaggedTaskAddBox from "./components/AddTask/TaggedTaskAddBox.vue"
 import EveryDayTasks from "@/components/EveryDayTasks/EveryDayTasks";
 import OneTimeTasks from "@/components/OneTimeTasks/OneTimeTasks";
 import PomoTaskSlot from "@/components/PomoTaskSlot/PomoTaskSlot";
-import TaskAddBox from "./components/AddTask/TaskAddBox";
-import Datepicker from 'vue3-datepicker'
 import axios from "axios";
 import {watch} from "vue";
+import PomoTaskList from "./components/TaskList/PomoTaskList"
 
 
 class TaskListWatcher{
@@ -112,14 +95,13 @@ class TaskListWatcher{
 export default {
   name: 'App',
   components: {
-    TaskAddBox,
     PomoTimer,
     TagTaskList,
     EveryDayTasks,
     OneTimeTasks,
     PomoTaskSlot,
     TaggedTaskAddBox,
-    Datepicker,
+    PomoTaskList,
   },
   data(){
     return {
@@ -162,16 +144,14 @@ export default {
     clearPomoTask(){
       this.pomoTask = undefined
     },
-    async onTaskAdd(task){
-      task['tags'] = ['pomo']
-      this.tasks.push(task)
-    },
     async removeTaskFromList(task){
       task['tags'] = task['tags'].filter(tag => tag !== 'pomo')
       console.log("remove Task from list", task)
       //await this.updateTask(task)
     },
-
+    addTask(task){
+      this.tasks.push(task)
+    },
     async promoteTask(task){
       this.pomoTask = task
     }
