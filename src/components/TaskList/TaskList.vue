@@ -32,12 +32,13 @@
 import draggable from "vuedraggable";
 import TaskBase from "@/components/TaskList/TaskBase";
 
-
+/*
 function isSameDay(dateA, dateB){
   return dateA.getDate() === dateB.getDate() &&
     dateA.getMonth() === dateB.getMonth() &&
     dateA.getFullYear() === dateB.getFullYear()
 }
+*/
 function AisBeforeBDay(dateA, dateB){
   dateA.setHours(0,0,0,0);
   dateB.setHours(0,0,0,0);
@@ -70,13 +71,15 @@ export default {
   computed:{
     wrappedTasks: function(){
       return this.orderedTasks
-        .filter(task =>
-          !AisBeforeBDay(new Date(task.createdAt), this.date || new Date())
-          && (
-            ( !('completedAt' in task) && new Date(task.createdAt) )
-              ||  isSameDay(new Date(task.createdAt), this.date || new Date()))
-          )
-        .map(task => {return  {task:task}})
+        .filter(task => {
+          let createdInThePast = !AisBeforeBDay(new Date(task.createdAt), this.date || new Date())
+          let completed = ('completedAt' in task)
+          let completedInPast = AisBeforeBDay(this.date || new Date(), new Date(task.completedAt))
+          //console.log("completedInThePast", completedInPast)
+          //console.log("(",createdInThePast,"&&",  !completed, ") || (", completed, "&& ", !completedInPast,") = ", ( createdInThePast && !completed) || ( completed && !completedInPast))
+          return createdInThePast && ( !completed || ( completed && !completedInPast))
+          }
+        ).map(task => {return  {task:task}})
     },
     orderedTasks: function(){
       saveOrder(this.storageKey, this.order)
