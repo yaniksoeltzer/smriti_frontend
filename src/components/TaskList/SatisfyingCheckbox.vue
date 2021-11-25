@@ -6,6 +6,7 @@
   />
   <label
       class="checkbox-label"
+      v-bind:class="{ 'checkbox-gray-out': grayOut }"
       v-on:click.prevent="checked_ = !checked_"
   >
   </label>
@@ -16,7 +17,11 @@ import {useModelWrapper} from "@/components/ModelWrapper";
 
 export default {
   props:{
-    checked: Boolean
+    checked: Boolean,
+    grayOut: {
+      type: Boolean,
+      default: false,
+    }
   },
   emits:["update:checked"],
   setup(props, { emit }) {
@@ -79,7 +84,10 @@ export default {
   transform-origin: left top;
   border-radius: 5px; /*rounding of the edges of the checkmark*/
   content: ' ';
-  transition: opacity ease .5;
+  transition: opacity ease .5s;
+}
+.checkbox-label.checkbox-gray-out::before, .checkbox-label.checkbox-gray-out::after {
+  background-color: #374231;
 }
 .checkbox-label::before {
   /* check mark top */
@@ -97,6 +105,9 @@ export default {
 
 .checkbox-input:checked + .checkbox-label{
   border-color: #34b93d;
+}
+.checkbox-input:checked + .checkbox-label.checkbox-gray-out{
+  border-color: #374231;
 }
 .checkbox-input:checked + .checkbox-label::after{
   height: 50px;

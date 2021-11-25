@@ -8,15 +8,12 @@
           Pomo List
         </h1>
       </div>
-      <div class="col-4 d-flex align-items-center justify-content-end">
-        <datepicker class="col" v-model="current_date" style="width:90px"/>
-      </div>
+      <TodayDatePicker />
     </div>
   </div>
 
   <TagTaskList
     tag="pomo"
-    :date="current_date"
     :tasks="tasks"
     v-on:promoteTask="()=>{}"
   />
@@ -24,16 +21,16 @@
 </template>
 
 <script>
-import Datepicker from 'vue3-datepicker'
 import TaskAddBox from "@/components/AddTask/TaskAddBox";
 import TagTaskList from "./TagTaskList.vue"
+import TodayDatePicker from "./TodayDatePicker";
 
 
 
 export default {
   name: "PomoTaskList",
   components: {
-    Datepicker,
+    TodayDatePicker,
     TagTaskList,
     TaskAddBox,
   },
@@ -43,11 +40,6 @@ export default {
   emits: [
     "createTask"
   ],
-  data(){
-    return {
-      current_date: new Date(),
-    }
-  },
   setup(props, { emit }) {
     return {
       onTaskAdd: (task) => {

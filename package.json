@@ -15,7 +15,8 @@
     "signal-js": "^2.4.0",
     "vue": "^3.0.0",
     "vue3-datepicker": "^0.2.5",
-    "vuedraggable": "^4.0.3"
+    "vuedraggable": "^4.0.3",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

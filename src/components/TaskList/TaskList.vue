@@ -31,19 +31,9 @@
 <script>
 import draggable from "vuedraggable";
 import TaskBase from "@/components/TaskList/TaskBase";
+import {AisBeforeBDay} from "../date_operations";
 
-/*
-function isSameDay(dateA, dateB){
-  return dateA.getDate() === dateB.getDate() &&
-    dateA.getMonth() === dateB.getMonth() &&
-    dateA.getFullYear() === dateB.getFullYear()
-}
-*/
-function AisBeforeBDay(dateA, dateB){
-  dateA.setHours(0,0,0,0);
-  dateB.setHours(0,0,0,0);
-  return dateA > dateB
-}
+
 
 export default {
   name: "TodoList",
@@ -54,7 +44,6 @@ export default {
   props:{
     storageID: String,
     tasks: Array,
-    date: Date,
   },
   emits:[
     "removeTask",
@@ -72,9 +61,9 @@ export default {
     wrappedTasks: function(){
       return this.orderedTasks
         .filter(task => {
-          let createdInThePast = !AisBeforeBDay(new Date(task.createdAt), this.date || new Date())
+          let createdInThePast = !AisBeforeBDay(new Date(task.createdAt), this.$store.state.today)
           let completed = ('completedAt' in task)
-          let completedInPast = AisBeforeBDay(this.date || new Date(), new Date(task.completedAt))
+          let completedInPast = AisBeforeBDay(this.$store.state.today, new Date(task.completedAt))
           //console.log("completedInThePast", completedInPast)
           //console.log("(",createdInThePast,"&&",  !completed, ") || (", completed, "&& ", !completedInPast,") = ", ( createdInThePast && !completed) || ( completed && !completedInPast))
           return createdInThePast && ( !completed || ( completed && !completedInPast))
